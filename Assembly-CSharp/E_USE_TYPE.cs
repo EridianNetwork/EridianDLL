@@ -1,0 +1,28 @@
+﻿using System;
+
+// Token: 0x020006FA RID: 1786
+public enum E_USE_TYPE
+{
+	// Token: 0x040020F2 RID: 8434
+	E_NONE,
+	// Token: 0x040020F3 RID: 8435
+	E_FULL,
+	// Token: 0x040020F4 RID: 8436
+	E_OPEN,
+	// Token: 0x040020F5 RID: 8437
+	V_SMASH,
+	// Token: 0x040020F6 RID: 8438
+	E_PICKUP,
+	// Token: 0x040020F7 RID: 8439
+	R_RELOAD,
+	// Token: 0x040020F8 RID: 8440
+	E_TALK,
+	// Token: 0x040020F9 RID: 8441
+	W_OUTAMMO,
+	// Token: 0x040020FA RID: 8442
+	E_SUCIDE,
+	// Token: 0x040020FB RID: 8443
+	E_REVIVE,
+	// Token: 0x040020FC RID: 8444
+	E_ENTER
+}
