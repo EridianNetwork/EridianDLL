@@ -137,8 +137,14 @@ public class EntityObject : Entity
 		base.transform.rotation = quaternion_0;
 		if (rigidbody != null)
 		{
-			rigidbody.AddForce(vector3_1 / 2f, ForceMode.VelocityChange);
-			rigidbody.AddTorque(global::UnityEngine.Random.insideUnitSphere, ForceMode.Impulse);
+			// A genuine drop (server sends zero launch velocity, e.g. chest loot) should just settle under
+			// gravity, not get kicked with a random impulse torque on top of whatever spawn-overlap
+			// depenetration push physics already applies. Only NPC/enemy-thrown drops carry real velocity.
+			if (vector3_1 != Vector3.zero)
+			{
+				rigidbody.AddForce(vector3_1 / 2f, ForceMode.VelocityChange);
+				rigidbody.AddTorque(global::UnityEngine.Random.insideUnitSphere, ForceMode.Impulse);
+			}
 		}
 		if (this.m_pickable)
 		{
