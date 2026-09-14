@@ -470,10 +470,10 @@ public class HunterManage : PlayerSkillManage, InstantiateManager.InstanciationC
 	private Utils.Timer m_delay_vfx_disappear = new Utils.Timer();
 
 	// Token: 0x040013C0 RID: 5056
-	private Vector3 m_VFXOffset_Normal = new Vector3(0f, 0f, 1.65f);
+	private Vector3 m_VFXOffset_Normal = new Vector3(0f, 0f, 0.72f);
 
 	// Token: 0x040013C1 RID: 5057
-	private Vector3 m_VFXOffset_Sprint = new Vector3(0f, 0f, 1.43f);
+	private Vector3 m_VFXOffset_Sprint = new Vector3(0f, 0f, 0.55f);
 
 	// Token: 0x040013C2 RID: 5058
 	[HideInInspector]

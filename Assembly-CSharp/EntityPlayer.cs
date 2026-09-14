@@ -15,6 +15,14 @@ using XsdSettings;
 // Token: 0x0200045C RID: 1116
 public class EntityPlayer : Entity, MeleeAttacker, KnockBackInterface, InteractionClient, IDamageListener, InstantiateManager.InstanciationClient
 {
+	// Elemental DOT screen VFX (fire/shock/corrosive) were spawned at the camera's exact local origin
+	// with identity rotation, so they rendered tiny/clipped instead of covering the screen. Matches the
+	// offset+rotation HunterManage already uses for its own full-screen VFX (E_Hunter_FullScreen), which
+	// positions the effect's quad in front of the camera facing back at it.
+	private static readonly Vector3 s_fullScreenDamageVFXOffset = new Vector3(0f, 0f, 1.8f);
+
+	private static readonly Quaternion s_fullScreenDamageVFXRotation = Quaternion.Euler(0f, 180f, 180f);
+
 	// Token: 0x1700016E RID: 366
 	// (get) Token: 0x06001BDE RID: 7134 RVA: 0x000140A3 File Offset: 0x000122A3
 	public VFXManager VFXManager_0
@@ -948,13 +956,13 @@ public class EntityPlayer : Entity, MeleeAttacker, KnockBackInterface, Interacti
 					switch (context.m_damageInfo.m_elementalType)
 					{
 					case AttackInfo.ElementalType.Fire:
-						MonoSingleton<GraphicsMgr>.Instance.method_24().method_3(this, ENPCParticleType.E_DamageFire, num);
+						MonoSingleton<GraphicsMgr>.Instance.method_24().method_4(this, ENPCParticleType.E_DamageFire, EntityPlayer.s_fullScreenDamageVFXOffset, EntityPlayer.s_fullScreenDamageVFXRotation, num);
 						break;
 					case AttackInfo.ElementalType.Shock:
-						MonoSingleton<GraphicsMgr>.Instance.method_24().method_3(this, ENPCParticleType.E_DamageElectricity, num);
+						MonoSingleton<GraphicsMgr>.Instance.method_24().method_4(this, ENPCParticleType.E_DamageElectricity, EntityPlayer.s_fullScreenDamageVFXOffset, EntityPlayer.s_fullScreenDamageVFXRotation, num);
 						break;
 					case AttackInfo.ElementalType.Corrosive:
-						MonoSingleton<GraphicsMgr>.Instance.method_24().method_3(this, ENPCParticleType.E_DamageVenom, num);
+						MonoSingleton<GraphicsMgr>.Instance.method_24().method_4(this, ENPCParticleType.E_DamageVenom, EntityPlayer.s_fullScreenDamageVFXOffset, EntityPlayer.s_fullScreenDamageVFXRotation, num);
 						break;
 					}
 				}
@@ -964,13 +972,13 @@ public class EntityPlayer : Entity, MeleeAttacker, KnockBackInterface, Interacti
 					switch (context.m_subType)
 					{
 					case AttackSubType.DamageOverTimeFire:
-						MonoSingleton<GraphicsMgr>.Instance.method_24().method_3(this, ENPCParticleType.E_DamageFire, num);
+						MonoSingleton<GraphicsMgr>.Instance.method_24().method_4(this, ENPCParticleType.E_DamageFire, EntityPlayer.s_fullScreenDamageVFXOffset, EntityPlayer.s_fullScreenDamageVFXRotation, num);
 						break;
 					case AttackSubType.DamageOverTimeShock:
-						MonoSingleton<GraphicsMgr>.Instance.method_24().method_3(this, ENPCParticleType.E_DamageElectricity, num);
+						MonoSingleton<GraphicsMgr>.Instance.method_24().method_4(this, ENPCParticleType.E_DamageElectricity, EntityPlayer.s_fullScreenDamageVFXOffset, EntityPlayer.s_fullScreenDamageVFXRotation, num);
 						break;
 					case AttackSubType.DamageOverTimeCorrosive:
-						MonoSingleton<GraphicsMgr>.Instance.method_24().method_3(this, ENPCParticleType.E_DamageVenom, num);
+						MonoSingleton<GraphicsMgr>.Instance.method_24().method_4(this, ENPCParticleType.E_DamageVenom, EntityPlayer.s_fullScreenDamageVFXOffset, EntityPlayer.s_fullScreenDamageVFXRotation, num);
 						break;
 					}
 				}
