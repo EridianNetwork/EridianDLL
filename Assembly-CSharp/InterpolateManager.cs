@@ -163,7 +163,6 @@ public class InterpolateManager
 						}
 						this.m_currentTP = new TimePos((double)Time.time, vector, this.m_currentTP.m_rotation * quaternion, num, 0);
 						this.m_currentTPTime = (double)Time.time;
-						this.m_timePosBuffer.Enqueue(this.m_currentTP);
 						flag = false;
 					}
 				}

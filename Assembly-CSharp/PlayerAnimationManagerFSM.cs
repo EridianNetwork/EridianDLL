@@ -806,7 +806,12 @@ public class PlayerAnimationManagerFSM : AnimationManagerFSM
 		}
 		if (this.method_20())
 		{
-			return true;
+			// Network says the jump bit is clear, but the jump FSM is still mid-flight (JumpPre/JumpLoop).
+			// Normally OnLand() (driven by BadAssCharacterMotorLite's local ground-physics check) closes this
+			// out, but that never fires for a remotely-rendered avatar (its position comes from MovementSync,
+			// not local physics), leaving it stuck floating in JumpLoop forever. Force it closed here instead.
+			this.method_21();
+			return false;
 		}
 		this.m_jumpStep = EAnimationJumpStep.JumpNull;
 		return false;
