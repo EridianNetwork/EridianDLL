@@ -54,30 +54,30 @@ public class InstantiateManager : MonoSingleton<InstantiateManager>
 	}
 
 	// Token: 0x06004A67 RID: 19047 RVA: 0x00030AC8 File Offset: 0x0002ECC8
-	public void method_0(InstantiateManager.SpawnRequest spawnRequest_0)
+	public void QueueSpawnRequest(InstantiateManager.SpawnRequest spawnRequest_0)
 	{
 		this.m_waitingSpawningRequest.Add(spawnRequest_0);
 	}
 
 	// Token: 0x06004A68 RID: 19048 RVA: 0x00030AD6 File Offset: 0x0002ECD6
-	public void method_1(GameObject gameObject_0)
+	public void RegisterInstantiatedObject(GameObject gameObject_0)
 	{
 		this.m_instantiateObject.Add(gameObject_0);
 	}
 
 	// Token: 0x06004A69 RID: 19049 RVA: 0x00030AE4 File Offset: 0x0002ECE4
-	public void method_2(GameObject gameObject_0)
+	public void UnregisterInstantiatedObject(GameObject gameObject_0)
 	{
 		this.m_instantiateObject.Remove(gameObject_0);
 	}
 
 	// Token: 0x06004A6A RID: 19050 RVA: 0x0013550C File Offset: 0x0013370C
-	public EntityWeapon method_3(WeaponDNA weaponDNA_0, Vector3 vector3_0, Quaternion quaternion_0, bool bool_0)
+	public EntityWeapon SpawnWeapon(WeaponDNA weaponDNA_0, Vector3 vector3_0, Quaternion quaternion_0, bool bool_0)
 	{
 		EntityWeapon entityWeapon;
 		if (bool_0)
 		{
-			entityWeapon = (EntityWeapon)this.method_6(ItemDNA.smethod_2(weaponDNA_0), vector3_0, quaternion_0, Vector3.zero, -1, -1, 0, 0);
+			entityWeapon = (EntityWeapon)this.SpawnItemEntity(ItemDNA.smethod_2(weaponDNA_0), vector3_0, quaternion_0, Vector3.zero, -1, -1, 0, 0);
 		}
 		else
 		{
@@ -90,12 +90,12 @@ public class InstantiateManager : MonoSingleton<InstantiateManager>
 	}
 
 	// Token: 0x06004A6B RID: 19051 RVA: 0x00135568 File Offset: 0x00133768
-	public EntityShield method_4(Vector3 vector3_0, Quaternion quaternion_0, bool bool_0)
+	public EntityShield SpawnShield(Vector3 vector3_0, Quaternion quaternion_0, bool bool_0)
 	{
 		EntityShield entityShield;
 		if (bool_0)
 		{
-			entityShield = (EntityShield)this.method_6(ItemDNA.smethod_6(), vector3_0, quaternion_0, Vector3.zero, -1, -1, 0, 0);
+			entityShield = (EntityShield)this.SpawnItemEntity(ItemDNA.smethod_6(), vector3_0, quaternion_0, Vector3.zero, -1, -1, 0, 0);
 		}
 		else
 		{
@@ -107,12 +107,12 @@ public class InstantiateManager : MonoSingleton<InstantiateManager>
 	}
 
 	// Token: 0x06004A6C RID: 19052 RVA: 0x001355BC File Offset: 0x001337BC
-	public EntityClassMode method_5(ItemDNA itemDNA_0, Vector3 vector3_0, Quaternion quaternion_0, bool bool_0)
+	public EntityClassMode SpawnClassModeItem(ItemDNA itemDNA_0, Vector3 vector3_0, Quaternion quaternion_0, bool bool_0)
 	{
 		EntityClassMode entityClassMode;
 		if (bool_0)
 		{
-			entityClassMode = (EntityClassMode)this.method_6(ItemDNA.smethod_8(itemDNA_0.method_8()), vector3_0, quaternion_0, Vector3.zero, -1, -1, 0, 0);
+			entityClassMode = (EntityClassMode)this.SpawnItemEntity(ItemDNA.smethod_8(itemDNA_0.method_8()), vector3_0, quaternion_0, Vector3.zero, -1, -1, 0, 0);
 		}
 		else
 		{
@@ -125,7 +125,7 @@ public class InstantiateManager : MonoSingleton<InstantiateManager>
 	}
 
 	// Token: 0x06004A6D RID: 19053 RVA: 0x00135624 File Offset: 0x00133824
-	public EntityObject method_6(ItemDNA itemDNA_0, Vector3 vector3_0, Quaternion quaternion_0, Vector3 vector3_1, int int_0 = -1, int int_1 = -1, int int_2 = 0, int int_3 = 0)
+	public EntityObject SpawnItemEntity(ItemDNA itemDNA_0, Vector3 vector3_0, Quaternion quaternion_0, Vector3 vector3_1, int int_0 = -1, int int_1 = -1, int int_2 = 0, int int_3 = 0)
 	{
 		EntityObject entityObject = null;
 		if (itemDNA_0 != null)
@@ -147,7 +147,7 @@ public class InstantiateManager : MonoSingleton<InstantiateManager>
 	}
 
 	// Token: 0x06004A6E RID: 19054 RVA: 0x001356B0 File Offset: 0x001338B0
-	public void method_7(PhotonPlayer photonPlayer_0)
+	public void SpawnPlayerInfo(PhotonPlayer photonPlayer_0)
 	{
 		object[] array = new object[]
 		{
@@ -194,7 +194,7 @@ public class InstantiateManager : MonoSingleton<InstantiateManager>
 	}
 
 	// Token: 0x06004A70 RID: 19056 RVA: 0x00030AF3 File Offset: 0x0002ECF3
-	public int method_8()
+	public int GetPendingSpawnCount()
 	{
 		return this.m_waitingSpawningRequest.Count;
 	}

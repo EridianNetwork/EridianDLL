@@ -1038,7 +1038,7 @@ public static class PhotonNetwork
 		{
 			if (photonView_0.instantiationId > 0)
 			{
-				PhotonNetwork.networkingPeer.method_48(photonView_0, false);
+				PhotonNetwork.networkingPeer.DestroyPhotonView(photonView_0, false);
 			}
 			else
 			{
@@ -1140,7 +1140,7 @@ public static class PhotonNetwork
 		}
 		if (PhotonNetwork.networkingPeer != null)
 		{
-			PhotonNetwork.networkingPeer.method_59(photonView_0, string_0, photonTargets_0, bool_0, object_0);
+			PhotonNetwork.networkingPeer.SendRPCToTargets(photonView_0, string_0, photonTargets_0, bool_0, object_0);
 		}
 		else
 		{
@@ -1166,7 +1166,7 @@ public static class PhotonNetwork
 		}
 		if (PhotonNetwork.networkingPeer != null)
 		{
-			PhotonNetwork.networkingPeer.method_58(photonView_0, string_0, photonPlayer_0, bool_0, object_0);
+			PhotonNetwork.networkingPeer.SendRPCToPlayer(photonView_0, string_0, photonPlayer_0, bool_0, object_0);
 		}
 		else
 		{

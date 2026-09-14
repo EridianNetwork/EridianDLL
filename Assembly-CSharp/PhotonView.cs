@@ -286,13 +286,13 @@ public class PhotonView : global::Photon.MonoBehaviour
 	}
 
 	// Token: 0x06004CA6 RID: 19622 RVA: 0x00031E15 File Offset: 0x00030015
-	public bool method_6()
+	public bool HasPendingSerializeData()
 	{
 		return !this.m_outStream.IsStreamEmpty();
 	}
 
 	// Token: 0x06004CA7 RID: 19623 RVA: 0x00031E25 File Offset: 0x00030025
-	public void method_7()
+	public void ClearOutStream()
 	{
 		this.m_outStream.ClearStream();
 	}
@@ -303,7 +303,7 @@ public class PhotonView : global::Photon.MonoBehaviour
 		this.m_outStream.ClearStream();
 		if (this.observed is IPhotonSerializeView)
 		{
-			this.m_outMessageInfo.method_0();
+			this.m_outMessageInfo.RefreshTimestamp();
 			IPhotonSerializeView photonSerializeView = (IPhotonSerializeView)this.observed;
 			photonSerializeView.OnPhotonSerializeView(this.m_outStream, this.m_outMessageInfo);
 			if (this.m_outStream.Count == 0)
@@ -314,7 +314,7 @@ public class PhotonView : global::Photon.MonoBehaviour
 		else if (this.observed is global::UnityEngine.MonoBehaviour)
 		{
 			global::UnityEngine.MonoBehaviour monoBehaviour = (global::UnityEngine.MonoBehaviour)this.observed;
-			this.m_outMessageInfo.method_0();
+			this.m_outMessageInfo.RefreshTimestamp();
 			PhotonNetwork.networkingPeer.method_68(monoBehaviour, this.m_outStream, this.m_outMessageInfo);
 			if (this.m_outStream.Count == 0)
 			{
@@ -412,7 +412,7 @@ public class PhotonView : global::Photon.MonoBehaviour
 	}
 
 	// Token: 0x06004CAB RID: 19627 RVA: 0x00141F60 File Offset: 0x00140160
-	public Hashtable method_9()
+	public Hashtable BuildFullSyncData()
 	{
 		this.m_outEventData.Clear();
 		this.m_outEventData[(byte)0] = this.m_viewID;
@@ -421,7 +421,7 @@ public class PhotonView : global::Photon.MonoBehaviour
 	}
 
 	// Token: 0x06004CAC RID: 19628 RVA: 0x00141FB4 File Offset: 0x001401B4
-	public Hashtable method_10()
+	public Hashtable BuildDeltaSyncData()
 	{
 		this.m_outEventData.Clear();
 		if (this.m_somethingLeftToSend)
@@ -444,7 +444,7 @@ public class PhotonView : global::Photon.MonoBehaviour
 	}
 
 	// Token: 0x06004CAD RID: 19629 RVA: 0x00142058 File Offset: 0x00140258
-	public Hashtable method_11(PhotonPlayer photonPlayer_0, bool bool_0)
+	public Hashtable BuildSyncDataForPlayer(PhotonPlayer photonPlayer_0, bool bool_0)
 	{
 		this.m_outEventData.Clear();
 		if (this.m_somethingLeftToSend || bool_0)
@@ -491,7 +491,7 @@ public class PhotonView : global::Photon.MonoBehaviour
 		{
 			this.grossSerializeSizeRCV += Utils.smethod_8(data);
 		}
-		if (!this.method_13(this, sender, data))
+		if (!this.HasReceivedFullPacket(this, sender, data))
 		{
 			DebugUtils.Log(LogCategory.Network, string.Concat(new object[] { "Skipping packet for ", base.name, " [", this.Int32_1, "] as we haven't received a full packet for delta compression yet. This is OK if it happens for the first few frames after joining a game." }));
 			return;
@@ -600,7 +600,7 @@ public class PhotonView : global::Photon.MonoBehaviour
 	}
 
 	// Token: 0x06004CB0 RID: 19632 RVA: 0x00142558 File Offset: 0x00140758
-	private bool method_13(PhotonView photonView_0, PhotonPlayer photonPlayer_0, Hashtable hashtable_0)
+	private bool HasReceivedFullPacket(PhotonView photonView_0, PhotonPlayer photonPlayer_0, Hashtable hashtable_0)
 	{
 		if (hashtable_0.ContainsKey((byte)1))
 		{

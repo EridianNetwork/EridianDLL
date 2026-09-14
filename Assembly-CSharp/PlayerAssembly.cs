@@ -43,7 +43,7 @@ public class PlayerAssembly : MonoBehaviour, InstantiateManager.InstanciationCli
 					spawnRequest.m_callbackData = null;
 					spawnRequest.m_isNetworkInstanciate = false;
 					spawnRequest.m_caller = this;
-					MonoSingleton<AppManager>.Instance.GetComponent<InstantiateManager>().method_0(spawnRequest);
+					MonoSingleton<AppManager>.Instance.GetComponent<InstantiateManager>().QueueSpawnRequest(spawnRequest);
 				}
 			}
 			else

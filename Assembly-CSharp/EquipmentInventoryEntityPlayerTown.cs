@@ -24,7 +24,7 @@ public class EquipmentInventoryEntityPlayerTown : EquipmentInventoryEntityPlayer
 		{
 			if (!this.m_weaponSlots[(int)b].method_4() && itemDNA_0[(int)b] != null)
 			{
-				EntityWeapon entityWeapon = MonoSingleton<InstantiateManager>.Instance.method_3(itemDNA_0[(int)b].method_6(), Vector3.zero, Quaternion.identity, false);
+				EntityWeapon entityWeapon = MonoSingleton<InstantiateManager>.Instance.SpawnWeapon(itemDNA_0[(int)b].method_6(), Vector3.zero, Quaternion.identity, false);
 				this.m_weaponSlots[(int)b].method_1(entityWeapon, itemDNA_0[(int)b]);
 			}
 			b += 1;
@@ -149,7 +149,7 @@ public class EquipmentInventoryEntityPlayerTown : EquipmentInventoryEntityPlayer
 	// Token: 0x06001F5C RID: 8028 RVA: 0x0009A5A0 File Offset: 0x000987A0
 	public override void vmethod_45(ItemDNA itemDNA_0)
 	{
-		EntityShield entityShield = MonoSingleton<InstantiateManager>.Instance.method_4(Vector3.zero, Quaternion.identity, false);
+		EntityShield entityShield = MonoSingleton<InstantiateManager>.Instance.SpawnShield(Vector3.zero, Quaternion.identity, false);
 		entityShield.method_18(itemDNA_0.method_7(), this.m_entity);
 		entityShield.vmethod_63(this.m_entity);
 		this.m_shieldSlot.method_1(entityShield, itemDNA_0);
@@ -163,7 +163,7 @@ public class EquipmentInventoryEntityPlayerTown : EquipmentInventoryEntityPlayer
 	// Token: 0x06001F5D RID: 8029 RVA: 0x0009A61C File Offset: 0x0009881C
 	public override void vmethod_49(ItemDNA itemDNA_0)
 	{
-		EntityClassMode entityClassMode = MonoSingleton<InstantiateManager>.Instance.method_5(itemDNA_0, Vector3.zero, Quaternion.identity, false);
+		EntityClassMode entityClassMode = MonoSingleton<InstantiateManager>.Instance.SpawnClassModeItem(itemDNA_0, Vector3.zero, Quaternion.identity, false);
 		entityClassMode.vmethod_63(this.m_entity);
 		entityClassMode.gameObject.SetActive(false);
 		this.m_classModeSlot.method_1(entityClassMode, itemDNA_0);
@@ -214,7 +214,7 @@ public class EquipmentInventoryEntityPlayerTown : EquipmentInventoryEntityPlayer
 		}
 		this.m_weaponSlots[(int)byte_1].method_0(0, itemDNA);
 		DebugUtils.Log(LogCategory.Gamelogic, "EquipWeapon - SpawnWeapon [ " + itemDNA.method_6().m_name + "]");
-		EntityWeapon entityWeapon2 = MonoSingleton<InstantiateManager>.Instance.method_3(itemDNA.method_6(), Vector3.zero, Quaternion.identity, false);
+		EntityWeapon entityWeapon2 = MonoSingleton<InstantiateManager>.Instance.SpawnWeapon(itemDNA.method_6(), Vector3.zero, Quaternion.identity, false);
 		(this.m_entity as EntityPlayer).vmethod_65(entityWeapon2, byte_1);
 		this.m_weaponSlots[(int)byte_1].method_1(entityWeapon2, itemDNA);
 		if (itemDNA != null && itemDNA.method_6() != null && itemDNA.method_6().m_attribute != null)
@@ -497,7 +497,7 @@ public class EquipmentInventoryEntityPlayerTown : EquipmentInventoryEntityPlayer
 							"] locally SpawnWeapon:",
 							itemDNA2.method_6()
 						}));
-						EntityWeapon entityWeapon = MonoSingleton<InstantiateManager>.Instance.method_3(itemDNA2.method_6(), Vector3.zero, Quaternion.identity, false);
+						EntityWeapon entityWeapon = MonoSingleton<InstantiateManager>.Instance.SpawnWeapon(itemDNA2.method_6(), Vector3.zero, Quaternion.identity, false);
 						this.m_weaponSlots[j].method_1(entityWeapon, itemDNA2);
 						(this.m_entity as EntityPlayer).vmethod_65(entityWeapon, (byte)j);
 					}
@@ -512,7 +512,7 @@ public class EquipmentInventoryEntityPlayerTown : EquipmentInventoryEntityPlayer
 	public override EntityShield vmethod_56()
 	{
 		DebugUtils.Log(LogCategory.Gamelogic, "EquipmentTown: SpawnShield ");
-		EntityShield entityShield = MonoSingleton<InstantiateManager>.Instance.method_4(Vector3.zero, Quaternion.identity, false);
+		EntityShield entityShield = MonoSingleton<InstantiateManager>.Instance.SpawnShield(Vector3.zero, Quaternion.identity, false);
 		this.method_43(entityShield);
 		return entityShield;
 	}

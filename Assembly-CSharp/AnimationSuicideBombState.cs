@@ -48,7 +48,7 @@ public class AnimationSuicideBombState : AnimationManagerState, InstantiateManag
 		spawnRequest.m_callbackData = null;
 		spawnRequest.m_isNetworkInstanciate = true;
 		spawnRequest.m_caller = this;
-		MonoSingleton<AppManager>.Instance.GetComponent<InstantiateManager>().method_0(spawnRequest);
+		MonoSingleton<AppManager>.Instance.GetComponent<InstantiateManager>().QueueSpawnRequest(spawnRequest);
 	}
 
 	// Token: 0x06000279 RID: 633 RVA: 0x00040DF4 File Offset: 0x0003EFF4

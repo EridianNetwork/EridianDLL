@@ -16,7 +16,7 @@ public class BadAssNetworkView : PhotonView
 		InstantiateManager component = MonoSingleton<AppManager>.Instance.GetComponent<InstantiateManager>();
 		if (component != null)
 		{
-			component.method_1(base.gameObject);
+			component.RegisterInstantiatedObject(base.gameObject);
 		}
 		NetworkManager component2 = MonoSingleton<AppManager>.Instance.GetComponent<NetworkManager>();
 		if (component2 != null)
@@ -34,7 +34,7 @@ public class BadAssNetworkView : PhotonView
 			InstantiateManager component = prop_.GetComponent<InstantiateManager>();
 			if (component != null)
 			{
-				component.method_2(base.gameObject);
+				component.UnregisterInstantiatedObject(base.gameObject);
 			}
 			NetworkManager component2 = prop_.GetComponent<NetworkManager>();
 			if (component2 != null)

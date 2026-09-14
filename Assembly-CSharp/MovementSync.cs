@@ -29,7 +29,7 @@ public class MovementSync : MonoBehaviour, IPhotonView, IPhotonSerializeView, IP
 	}
 
 	// Token: 0x06004A9E RID: 19102 RVA: 0x00030CB0 File Offset: 0x0002EEB0
-	public Vector3 method_1()
+	public Vector3 GetInterpolatedVelocity()
 	{
 		if (this.m_interpolater == null)
 		{
@@ -76,7 +76,7 @@ public class MovementSync : MonoBehaviour, IPhotonView, IPhotonSerializeView, IP
 	}
 
 	// Token: 0x06004AA3 RID: 19107 RVA: 0x00135EE4 File Offset: 0x001340E4
-	public byte method_2(EntityPlayer entityPlayer_0)
+	public byte BuildAnimationFlags(EntityPlayer entityPlayer_0)
 	{
 		if (entityPlayer_0 == null)
 		{
@@ -133,7 +133,7 @@ public class MovementSync : MonoBehaviour, IPhotonView, IPhotonSerializeView, IP
 			if (entityPlayer != null)
 			{
 				stream.SendNext(entityPlayer.method_43().currentInput.m_frameNum);
-				stream.SendNext(this.method_2(entityPlayer));
+				stream.SendNext(this.BuildAnimationFlags(entityPlayer));
 				stream.SendNext((short)entityPlayer.method_43().currentInput.m_pitch16);
 			}
 			else if (this.m_entity is EntityNpc)
@@ -220,7 +220,7 @@ public class MovementSync : MonoBehaviour, IPhotonView, IPhotonSerializeView, IP
 		{
 			for (int i = 0; i < this.m_teleportRequests.Count; i++)
 			{
-				this.method_3(this.m_teleportRequests[i].m_pos, this.m_teleportRequests[i].m_rot);
+				this.ApplyTeleport(this.m_teleportRequests[i].m_pos, this.m_teleportRequests[i].m_rot);
 			}
 			this.m_teleportRequests.Clear();
 		}
@@ -248,11 +248,11 @@ public class MovementSync : MonoBehaviour, IPhotonView, IPhotonSerializeView, IP
 			{
 				if (this.m_entity.vmethod_26())
 				{
-					this.method_7();
+					this.ApplyLocalPredictedPosition();
 				}
 				else if (this.m_followServerMovement)
 				{
-					this.method_6();
+					this.ApplyServerInterpolatedPosition();
 				}
 			}
 		}
@@ -286,7 +286,7 @@ public class MovementSync : MonoBehaviour, IPhotonView, IPhotonSerializeView, IP
 	}
 
 	// Token: 0x06004AA8 RID: 19112 RVA: 0x00136518 File Offset: 0x00134718
-	private void method_3(Vector3 vector3_0, Quaternion quaternion_0)
+	private void ApplyTeleport(Vector3 vector3_0, Quaternion quaternion_0)
 	{
 		DebugUtils.Log(LogCategory.Network, string.Concat(new object[]
 		{
@@ -377,7 +377,7 @@ public class MovementSync : MonoBehaviour, IPhotonView, IPhotonSerializeView, IP
 	}
 
 	// Token: 0x06004AAC RID: 19116 RVA: 0x001367DC File Offset: 0x001349DC
-	private void method_6()
+	private void ApplyServerInterpolatedPosition()
 	{
 		int count = this.m_clientTimePos.GetCount();
 		if (count > 4)
@@ -426,7 +426,7 @@ public class MovementSync : MonoBehaviour, IPhotonView, IPhotonSerializeView, IP
 	}
 
 	// Token: 0x06004AAD RID: 19117 RVA: 0x00136950 File Offset: 0x00134B50
-	private void method_7()
+	private void ApplyLocalPredictedPosition()
 	{
 		TimePos timePos = (TimePos)m_hostTimePos.PeekLast();
 		if (timePos == null || timePos.m_frameNum == -1)

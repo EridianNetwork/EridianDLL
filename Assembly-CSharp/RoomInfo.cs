@@ -8,7 +8,7 @@ public class RoomInfo
 	// Token: 0x06004E51 RID: 20049 RVA: 0x00032F63 File Offset: 0x00031163
 	protected internal RoomInfo(string string_0, Hashtable hashtable_0)
 	{
-		this.method_0(hashtable_0);
+		this.ApplyPropertiesUpdate(hashtable_0);
 		this.nameField = string_0;
 	}
 
@@ -105,7 +105,7 @@ public class RoomInfo
 	}
 
 	// Token: 0x06004E60 RID: 20064 RVA: 0x0014C0D8 File Offset: 0x0014A2D8
-	protected internal void method_0(Hashtable hashtable_0)
+	protected internal void ApplyPropertiesUpdate(Hashtable hashtable_0)
 	{
 		if (hashtable_0 != null && hashtable_0.Count != 0 && !this.customPropertiesField.Equals(hashtable_0))
 		{

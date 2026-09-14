@@ -881,7 +881,7 @@ public class EquipmentInventoryEntityPlayer : EquipmentInventoryEntity, IPhotonE
 		Vector3 position = this.m_entity.transform.position;
 		position.y += 1f;
 		Vector3 normalized = (vector3_0 - this.m_entity.transform.position).normalized;
-		MonoSingleton<InstantiateManager>.Instance.method_6(this.vmethod_39(), position, this.m_entity.transform.rotation, normalized, -1, -1, 0, 0);
+		MonoSingleton<InstantiateManager>.Instance.SpawnItemEntity(this.vmethod_39(), position, this.m_entity.transform.rotation, normalized, -1, -1, 0, 0);
 	}
 
 	// Token: 0x06001F21 RID: 7969 RVA: 0x00098D80 File Offset: 0x00096F80
@@ -1046,7 +1046,7 @@ public class EquipmentInventoryEntityPlayer : EquipmentInventoryEntity, IPhotonE
 	// Token: 0x06001F29 RID: 7977 RVA: 0x000990B8 File Offset: 0x000972B8
 	public virtual void vmethod_49(ItemDNA itemDNA_0)
 	{
-		EntityClassMode entityClassMode = MonoSingleton<InstantiateManager>.Instance.method_5(itemDNA_0, Vector3.zero, Quaternion.identity, true);
+		EntityClassMode entityClassMode = MonoSingleton<InstantiateManager>.Instance.SpawnClassModeItem(itemDNA_0, Vector3.zero, Quaternion.identity, true);
 		entityClassMode.method_16(itemDNA_0.method_8());
 		entityClassMode.vmethod_63(this.m_entity);
 	}

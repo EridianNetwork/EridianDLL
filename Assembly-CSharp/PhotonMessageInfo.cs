@@ -20,7 +20,7 @@ public class PhotonMessageInfo
 	}
 
 	// Token: 0x06004D9A RID: 19866 RVA: 0x0003262A File Offset: 0x0003082A
-	public void method_0()
+	public void RefreshTimestamp()
 	{
 		this.timeInt = PhotonNetwork.networkingPeer.ServerTimeInMilliSeconds;
 	}

@@ -869,7 +869,7 @@ public class PlayerAnimationManagerFSM : AnimationManagerFSM
 		float num4 = num;
 		if (this.m_movementSync != null)
 		{
-			Vector3 vector = this.m_movementSync.method_1();
+			Vector3 vector = this.m_movementSync.GetInterpolatedVelocity();
 			vector.y = 0f;
 			num4 = vector.magnitude;
 		}

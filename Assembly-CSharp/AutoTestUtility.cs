@@ -16,7 +16,7 @@ public static class AutoTestUtility
 		WeaponGeneratorService component = MonoSingleton<AppManager>.Instance.GetComponent<WeaponGeneratorService>();
 		ItemDNA itemDNA = ItemDNA.smethod_2(component.m_weapons[0]);
 		vector3_0.y += 1f;
-		MonoSingleton<AppManager>.Instance.GetComponent<InstantiateManager>().method_6(itemDNA, vector3_0, Quaternion.identity, Vector3.up, -1, -1, 0, 0);
+		MonoSingleton<AppManager>.Instance.GetComponent<InstantiateManager>().SpawnItemEntity(itemDNA, vector3_0, Quaternion.identity, Vector3.up, -1, -1, 0, 0);
 	}
 
 	// Token: 0x0600288B RID: 10379 RVA: 0x000BF31C File Offset: 0x000BD51C

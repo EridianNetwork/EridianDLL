@@ -40,7 +40,7 @@ internal class PhotonHandler : global::Photon.MonoBehaviour, IPhotonPeerListener
 				if (num > this.nextSendTickCountOnSerialize)
 				{
 					this.nextSendTickCountOnSerialize = num / this.updateIntervalOnSerialize * this.updateIntervalOnSerialize + this.updateIntervalOnSerialize;
-					PhotonNetwork.networkingPeer.method_64();
+					PhotonNetwork.networkingPeer.RunViewUpdateTick();
 					this.nextSendTickCount = 0;
 				}
 				if (num > this.nextSendTickCount)
