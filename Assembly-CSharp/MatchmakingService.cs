@@ -64,9 +64,9 @@ public class MatchmakingService : global::Photon.MonoBehaviour
 			this.m_playlistSetup = xmlSerializer.Deserialize(stringReader) as PlayListSetup;
 		}
 		Resources.UnloadAsset(textAsset);
-		PhotonNetwork.networkingPeer.method_79(136, new OperationResponseCallback(this.OnKickPlayerFromGameResponse));
-		PhotonNetwork.networkingPeer.method_77(197, new EventCallback(this.OnGameOwnerChangedEvent));
-		PhotonNetwork.networkingPeer.method_77(196, new EventCallback(this.OnKickedFromGameEvent));
+		PhotonNetwork.networkingPeer.RegisterOperationResponseCallback(136, new OperationResponseCallback(this.OnKickPlayerFromGameResponse));
+		PhotonNetwork.networkingPeer.RegisterEventCallback(197, new EventCallback(this.OnGameOwnerChangedEvent));
+		PhotonNetwork.networkingPeer.RegisterEventCallback(196, new EventCallback(this.OnKickedFromGameEvent));
 		OnAccessSingleton<ILobbyService, LobbyService, LobbyServiceOffline>.Prop_0.imethod_10(new OnPlayerJoinLobby(this.OnPlayerJoinPvPRoom));
 		OnAccessSingleton<ILobbyService, LobbyService, LobbyServiceOffline>.Prop_0.imethod_12(new OnPlayerLeaveLobby(this.OnPlayerLeavePvPRoom));
 		OnAccessSingleton<ILobbyService, LobbyService, LobbyServiceOffline>.Prop_0.imethod_22(new OnLobbyOwnerChange(this.OnPvPRoomOwnerChange));
@@ -258,7 +258,7 @@ public class MatchmakingService : global::Photon.MonoBehaviour
 	// Token: 0x0600182B RID: 6187 RVA: 0x00011F83 File Offset: 0x00010183
 	public void method_9(int int_0)
 	{
-		PhotonNetwork.networkingPeer.method_81(136, new object[] { int_0 });
+		PhotonNetwork.networkingPeer.OpCustomWithArgs(136, new object[] { int_0 });
 	}
 
 	// Token: 0x0600182C RID: 6188 RVA: 0x0000311B File Offset: 0x0000131B

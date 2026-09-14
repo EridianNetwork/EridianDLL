@@ -17,8 +17,8 @@ public class InventoryService : OnAccessSingleton<IInventoryService, InventorySe
 		PhotonNetwork.onlinePeer.method_7(222, new EventCallback(this.OnServerInventoryUpdate));
 		PhotonNetwork.onlinePeer.method_5(99, new OperationResponseCallback(this.OnNewWarehouse));
 		PhotonNetwork.onlinePeer.method_7(168, new EventCallback(this.OnServerWarehouseUpdate));
-		PhotonNetwork.networkingPeer.method_77(222, new EventCallback(this.OnInventoryUpdated));
-		PhotonNetwork.networkingPeer.method_77(221, new EventCallback(this.OnInventoryAction));
+		PhotonNetwork.networkingPeer.RegisterEventCallback(222, new EventCallback(this.OnInventoryUpdated));
+		PhotonNetwork.networkingPeer.RegisterEventCallback(221, new EventCallback(this.OnInventoryAction));
 		PhotonNetwork.onlinePeer.method_5(59, new OperationResponseCallback(this.OnGetBackpackProgressionResponse));
 		PhotonNetwork.onlinePeer.method_5(58, new OperationResponseCallback(this.OnPurchaseBackpackSizeResponse));
 		this.mInventories = new Dictionary<int, Inventory>();

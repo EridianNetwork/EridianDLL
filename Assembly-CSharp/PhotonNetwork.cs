@@ -207,12 +207,12 @@ public static class PhotonNetwork
 				if (PhotonNetwork.isOfflineMode)
 				{
 					NetworkingPeer.SendMonoMessage(PhotonNetworkingMessage.OnConnectedToPhoton, new object[0]);
-					PhotonNetwork.networkingPeer.method_28(1);
+					PhotonNetwork.networkingPeer.SetLocalActorId(1);
 					PhotonNetwork.networkingPeer.mMasterClient = PhotonNetwork.player;
 				}
 				else
 				{
-					PhotonNetwork.networkingPeer.method_28(-1);
+					PhotonNetwork.networkingPeer.SetLocalActorId(-1);
 					PhotonNetwork.networkingPeer.mMasterClient = null;
 				}
 			}
@@ -485,7 +485,7 @@ public static class PhotonNetwork
 	public static void NetworkStatisticsReset()
 	{
 		PhotonNetwork.networkingPeer.TrafficStatsReset();
-		PhotonNetwork.networkingPeer.method_72();
+		PhotonNetwork.networkingPeer.ResetNetworkStatistics();
 	}
 
 	// Token: 0x06004DF2 RID: 19954 RVA: 0x00032AE0 File Offset: 0x00030CE0
@@ -629,7 +629,7 @@ public static class PhotonNetwork
 					NetworkingPeer.SendMonoMessage(PhotonNetworkingMessage.OnJoinedRoom, new object[0]);
 					return;
 				}
-				PhotonNetwork.networkingPeer.method_29(string_0, true, true, 0, PhotonNetwork.autoCleanUpPlayerObjects, null, null);
+				PhotonNetwork.networkingPeer.OpCreateRoom(string_0, true, true, 0, PhotonNetwork.autoCleanUpPlayerObjects, null, null);
 				return;
 			}
 		}
@@ -665,7 +665,7 @@ public static class PhotonNetwork
 					DebugUtils.LogError(LogCategory.Network, "Error: CreateRoom called with " + int_0 + " maxplayers. This has been reverted to the max of 255 players because internally a 'byte' is used.");
 					int_0 = 255;
 				}
-				PhotonNetwork.networkingPeer.method_29(string_0, bool_0, bool_1, (byte)int_0, PhotonNetwork.autoCleanUpPlayerObjects, hashtable_0, string_1);
+				PhotonNetwork.networkingPeer.OpCreateRoom(string_0, bool_0, bool_1, (byte)int_0, PhotonNetwork.autoCleanUpPlayerObjects, hashtable_0, string_1);
 				return;
 			}
 		}
@@ -754,7 +754,7 @@ public static class PhotonNetwork
 					{
 						hashtable[byte.MaxValue] = byte_0;
 					}
-					PhotonNetwork.networkingPeer.vmethod_4(hashtable, 0, null, matchmakingMode_0);
+					PhotonNetwork.networkingPeer.OpJoinRandomRoom(hashtable, 0, null, matchmakingMode_0);
 				}
 				return;
 			}
@@ -766,7 +766,7 @@ public static class PhotonNetwork
 	// Token: 0x06004E02 RID: 19970 RVA: 0x00032B63 File Offset: 0x00030D63
 	public static void smethod_17(Query query_0, int int_0 = 50)
 	{
-		PhotonNetwork.networkingPeer.method_30(query_0, int_0);
+		PhotonNetwork.networkingPeer.OpExecuteQuery(query_0, int_0);
 	}
 
 	// Token: 0x06004E03 RID: 19971 RVA: 0x0014A8F8 File Offset: 0x00148AF8
@@ -784,7 +784,7 @@ public static class PhotonNetwork
 		}
 		else
 		{
-			PhotonNetwork.networkingPeer.vmethod_14();
+			PhotonNetwork.networkingPeer.OpCancelJoin();
 		}
 	}
 
@@ -808,7 +808,7 @@ public static class PhotonNetwork
 		}
 		else
 		{
-			PhotonNetwork.networkingPeer.vmethod_15();
+			PhotonNetwork.networkingPeer.OpLeaveRoom();
 		}
 	}
 
@@ -1027,7 +1027,7 @@ public static class PhotonNetwork
 		else
 		{
 			int[] array = new int[] { photonPlayer_0.ActorId };
-			PhotonNetwork.networkingPeer.vmethod_11(203, null, true, 0, array);
+			PhotonNetwork.networkingPeer.RaiseEventToActors(203, null, true, 0, array);
 		}
 	}
 
@@ -1061,14 +1061,14 @@ public static class PhotonNetwork
 		}
 		else if (component.Boolean_1)
 		{
-			int num = PhotonNetwork.networkingPeer.method_44(gameObject_0);
+			int num = PhotonNetwork.networkingPeer.GetInstantiatedObjectsId(gameObject_0);
 			if (num <= 0)
 			{
 				DebugUtils.LogError(LogCategory.Network, "Use PhotonNetwork.Destroy() only on GameObjects created with PhotonNetwork.Instantiate(). GameObject not destroyed: " + gameObject_0);
 			}
 			else
 			{
-				PhotonNetwork.networkingPeer.method_43(gameObject_0, false);
+				PhotonNetwork.networkingPeer.RemoveInstantiatedObject(gameObject_0, false);
 			}
 		}
 		else
@@ -1314,7 +1314,7 @@ public static class PhotonNetwork
 	// Token: 0x06004E25 RID: 20005 RVA: 0x00032D65 File Offset: 0x00030F65
 	public static float smethod_52()
 	{
-		return PhotonNetwork.networkingPeer.method_10();
+		return PhotonNetwork.networkingPeer.GetLowestPing();
 	}
 
 	// Token: 0x04003A3C RID: 14908

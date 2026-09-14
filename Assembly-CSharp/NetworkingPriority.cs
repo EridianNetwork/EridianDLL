@@ -138,7 +138,7 @@ public class NetworkingPriority
 			return;
 		}
 		List<PhotonView> list;
-		PhotonNetwork.networkingPeer.method_8(out list);
+		PhotonNetwork.networkingPeer.GetActivePhotonViewsList(out list);
 		for (int i = 0; i < list.Count; i++)
 		{
 			PhotonView photonView = list[i];

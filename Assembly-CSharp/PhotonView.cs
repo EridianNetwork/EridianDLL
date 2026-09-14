@@ -37,7 +37,7 @@ public class PhotonView : global::Photon.MonoBehaviour
 		{
 			if (!this.didAwake)
 			{
-				this.instantiationDataField = PhotonNetwork.networkingPeer.method_39(this.instantiationId);
+				this.instantiationDataField = PhotonNetwork.networkingPeer.GetTempInstantiationData(this.instantiationId);
 			}
 			return this.instantiationDataField;
 		}
@@ -64,7 +64,7 @@ public class PhotonView : global::Photon.MonoBehaviour
 			this.m_viewID = this.ownerId * PhotonNetwork.MAX_VIEW_IDS + this.subId;
 			if (flag)
 			{
-				PhotonNetwork.networkingPeer.method_50(this);
+				PhotonNetwork.networkingPeer.RegisterPhotonView(this);
 			}
 		}
 	}
@@ -165,8 +165,8 @@ public class PhotonView : global::Photon.MonoBehaviour
 	public void Awake()
 	{
 		this.m_viewID = this.ownerId * PhotonNetwork.MAX_VIEW_IDS + this.subId;
-		PhotonNetwork.networkingPeer.method_50(this);
-		this.instantiationDataField = PhotonNetwork.networkingPeer.method_39(this.instantiationId);
+		PhotonNetwork.networkingPeer.RegisterPhotonView(this);
+		this.instantiationDataField = PhotonNetwork.networkingPeer.GetTempInstantiationData(this.instantiationId);
 		this.didAwake = true;
 		this.bufferedRPC = new List<Pair<Hashtable, PhotonPlayer>>();
 		this.preInstantiate = false;
@@ -194,7 +194,7 @@ public class PhotonView : global::Photon.MonoBehaviour
 	// Token: 0x06004C9D RID: 19613 RVA: 0x00141AEC File Offset: 0x0013FCEC
 	public void OnDestroy()
 	{
-		PhotonNetwork.networkingPeer.method_51(this);
+		PhotonNetwork.networkingPeer.UnregisterPhotonView(this);
 		if (!this.destroyedByPhotonNetworkOrQuit && !Application.isLoadingLevel)
 		{
 			if (this.instantiationId > 0)
@@ -261,7 +261,7 @@ public class PhotonView : global::Photon.MonoBehaviour
 	// Token: 0x06004CA4 RID: 19620 RVA: 0x00031E08 File Offset: 0x00030008
 	public static PhotonView smethod_2(int int_0)
 	{
-		return PhotonNetwork.networkingPeer.method_49(int_0);
+		return PhotonNetwork.networkingPeer.GetPhotonViewByID(int_0);
 	}
 
 	// Token: 0x06004CA5 RID: 19621 RVA: 0x00141BEC File Offset: 0x0013FDEC
@@ -315,7 +315,7 @@ public class PhotonView : global::Photon.MonoBehaviour
 		{
 			global::UnityEngine.MonoBehaviour monoBehaviour = (global::UnityEngine.MonoBehaviour)this.observed;
 			this.m_outMessageInfo.RefreshTimestamp();
-			PhotonNetwork.networkingPeer.method_68(monoBehaviour, this.m_outStream, this.m_outMessageInfo);
+			PhotonNetwork.networkingPeer.InvokeSerializeViewCallback(monoBehaviour, this.m_outStream, this.m_outMessageInfo);
 			if (this.m_outStream.Count == 0)
 			{
 				return;
@@ -515,7 +515,7 @@ public class PhotonView : global::Photon.MonoBehaviour
 			global::UnityEngine.MonoBehaviour monoBehaviour = (global::UnityEngine.MonoBehaviour)this.observed;
 			PhotonStream photonStream2 = new PhotonStream(false, array2);
 			PhotonMessageInfo photonMessageInfo2 = new PhotonMessageInfo(sender, networkTime, this);
-			PhotonNetwork.networkingPeer.method_68(monoBehaviour, photonStream2, photonMessageInfo2);
+			PhotonNetwork.networkingPeer.InvokeSerializeViewCallback(monoBehaviour, photonStream2, photonMessageInfo2);
 		}
 		else if (this.observed is Transform)
 		{

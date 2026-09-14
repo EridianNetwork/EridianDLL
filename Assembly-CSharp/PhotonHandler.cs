@@ -76,9 +76,9 @@ internal class PhotonHandler : global::Photon.MonoBehaviour, IPhotonPeerListener
 				}
 				if (MonoSingleton<Session>.Instance != null && !MonoSingleton<Session>.Instance.method_16())
 				{
-					PhotonNetwork.networkingPeer.method_70();
+					PhotonNetwork.networkingPeer.ResetViewPriorities();
 				}
-				PhotonNetwork.networkingPeer.method_63();
+				PhotonNetwork.networkingPeer.ProcessPendingInstantiates();
 				return;
 			}
 		}
@@ -107,7 +107,7 @@ internal class PhotonHandler : global::Photon.MonoBehaviour, IPhotonPeerListener
 	// Token: 0x06004DB8 RID: 19896 RVA: 0x00032723 File Offset: 0x00030923
 	protected void OnLevelWasLoaded(int level)
 	{
-		PhotonNetwork.networkingPeer.method_62();
+		PhotonNetwork.networkingPeer.PurgeDestroyedSceneViews();
 		if (PhotonNetwork.automaticallySyncScene)
 		{
 			this.method_0();

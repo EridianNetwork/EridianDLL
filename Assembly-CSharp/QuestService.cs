@@ -24,7 +24,7 @@ internal class QuestService : OnAccessSingleton<IQuestService, QuestService, Que
 		PhotonNetwork.onlinePeer.method_7(217, new EventCallback(this.OnQuestTaskCompleted));
 		PhotonNetwork.onlinePeer.method_7(170, new EventCallback(this.OnQuestClearDailyQuest));
 		PhotonNetwork.onlinePeer.method_7(169, new EventCallback(this.OnQuestTaskUpdated));
-		PhotonNetwork.networkingPeer.method_77(215, new EventCallback(this.OnQuestRewardClaimed));
+		PhotonNetwork.networkingPeer.RegisterEventCallback(215, new EventCallback(this.OnQuestRewardClaimed));
 	}
 
 	// Token: 0x0600189B RID: 6299 RVA: 0x00082204 File Offset: 0x00080404

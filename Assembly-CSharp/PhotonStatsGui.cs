@@ -92,7 +92,7 @@ public class PhotonStatsGui : MonoBehaviour
 			}
 			GUILayout.BeginHorizontal(new GUILayoutOption[0]);
 			this.showRCV = GUILayout.Toggle(this.showRCV, "RCV", new GUILayoutOption[0]);
-			int num2 = ((!this.showRCV) ? PhotonNetwork.networkingPeer.method_75() : PhotonNetwork.networkingPeer.method_76());
+			int num2 = ((!this.showRCV) ? PhotonNetwork.networkingPeer.GetTotalSentBytes() : PhotonNetwork.networkingPeer.GetTotalReceivedBytes());
 			string text7 = string.Concat(new object[]
 			{
 				"Ingame Total",
@@ -107,7 +107,7 @@ public class PhotonStatsGui : MonoBehaviour
 			GUILayout.Label(text7, new GUILayoutOption[0]);
 			this.showSpeed = GUILayout.Toggle(this.showSpeed, "Speed", new GUILayoutOption[0]);
 			GUILayout.EndHorizontal();
-			List<PhotonView> list = ((!this.showRCV) ? PhotonNetwork.networkingPeer.method_73() : PhotonNetwork.networkingPeer.method_74());
+			List<PhotonView> list = ((!this.showRCV) ? PhotonNetwork.networkingPeer.GetSortedPhotonViewsBySent() : PhotonNetwork.networkingPeer.GetSortedPhotonViewsByReceived());
 			int num3 = 0;
 			while (num3 < list.Count && num3 < 10)
 			{

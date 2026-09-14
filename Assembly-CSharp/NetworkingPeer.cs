@@ -23,7 +23,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 		this.externalListener = iphotonPeerListener_0;
 		this.playerName = string_0;
 		this.mLocalActor = new PhotonPlayer(true, -1, this.playername);
-		this.method_17(this.mLocalActor.ActorId, this.mLocalActor);
+		this.AddActor(this.mLocalActor.ActorId, this.mLocalActor);
 		this.State = global::PeerState.PeerCreated;
 		this.mFallbackSessions = new Queue<string>();
 		base.LimitOfUnreliableCommands = 200;
@@ -69,7 +69,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 				this.playername = value;
 				if (this.Room_0 != null)
 				{
-					this.method_25();
+					this.UpdateLocalPlayerName();
 				}
 				return;
 			}
@@ -131,19 +131,19 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	public int mPlayersInRoomsCount { get; internal set; }
 
 	// Token: 0x06004CFA RID: 19706 RVA: 0x00032049 File Offset: 0x00030249
-	public ReadOnlyCollection<PhotonView> method_6()
+	public ReadOnlyCollection<PhotonView> GetAllPhotonViews()
 	{
 		return this.photonViews.AsReadOnly();
 	}
 
 	// Token: 0x06004CFB RID: 19707 RVA: 0x00032056 File Offset: 0x00030256
-	public ReadOnlyCollection<PhotonView> method_7()
+	public ReadOnlyCollection<PhotonView> GetActivePhotonViews()
 	{
 		return this.photonActiveViews.AsReadOnly();
 	}
 
 	// Token: 0x06004CFC RID: 19708 RVA: 0x00032063 File Offset: 0x00030263
-	public void method_8(out List<PhotonView> list_0)
+	public void GetActivePhotonViewsList(out List<PhotonView> list_0)
 	{
 		list_0 = this.photonActiveViews;
 	}
@@ -160,7 +160,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004CFE RID: 19710 RVA: 0x00143320 File Offset: 0x00141520
-	public float method_10()
+	public float GetLowestPing()
 	{
 		float num = 0f;
 		if (peerRoundTripTimes.Count > 0)
@@ -209,28 +209,28 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 		MonoSingleton<DebugInfoManager>.Instance.method_3();
 		base.Disconnect();
 		this.State = global::PeerState.Disconnecting;
-		this.method_14();
-		this.method_13();
+		this.ResetRoomState();
+		this.LeaveLobbyIfInside();
 	}
 
 	// Token: 0x06004D01 RID: 19713 RVA: 0x0003206D File Offset: 0x0003026D
-	private void method_11()
+	private void DisconnectFromMasterServer()
 	{
 		base.Disconnect();
 		this.State = global::PeerState.DisconnectingFromMasterserver;
-		this.method_13();
+		this.LeaveLobbyIfInside();
 	}
 
 	// Token: 0x06004D02 RID: 19714 RVA: 0x00032082 File Offset: 0x00030282
-	private void method_12()
+	private void DisconnectFromGameServer()
 	{
 		base.Disconnect();
 		this.State = global::PeerState.DisconnectingFromGameserver;
-		this.method_14();
+		this.ResetRoomState();
 	}
 
 	// Token: 0x06004D03 RID: 19715 RVA: 0x00032098 File Offset: 0x00030298
-	private void method_13()
+	private void LeaveLobbyIfInside()
 	{
 		if (!this.insideLobby)
 		{
@@ -241,7 +241,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D04 RID: 19716 RVA: 0x00143444 File Offset: 0x00141644
-	private void method_14()
+	private void ResetRoomState()
 	{
 		bool flag = this.mRoomToGetInto != null;
 		bool flag2 = ((this.mRoomToGetInto == null) ? PhotonNetwork.autoCleanUpPlayerObjects : this.mRoomToGetInto.Boolean_4);
@@ -257,7 +257,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 		this.networkingPriority.method_4();
 		this.instantiatingPhotonViews = new List<NetworkingPeer.InstantiatingPhotonViews>();
 		this.removingInstantiatingPhotonViews = new List<NetworkingPeer.InstantiatingPhotonViews>();
-		this.method_28(-1);
+		this.SetLocalActorId(-1);
 		if (flag2)
 		{
 			List<GameObject> list = new List<GameObject>(this.instantiatedObjects.Values);
@@ -277,7 +277,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 					{
 						this.DebugReturn(DebugLevel.ALL, "Network destroy Instantiated GO: " + gameObject.name);
 					}
-					this.method_15(gameObject);
+					this.DestroyInstantiatedObject(gameObject);
 				}
 			}
 			this.instantiatedObjects = new Dictionary<int, GameObject>();
@@ -292,7 +292,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D05 RID: 19717 RVA: 0x0014360C File Offset: 0x0014180C
-	private void method_15(GameObject gameObject_0)
+	private void DestroyInstantiatedObject(GameObject gameObject_0)
 	{
 		PhotonView[] componentsInChildren = gameObject_0.GetComponentsInChildren<PhotonView>(true);
 		foreach (PhotonView photonView in componentsInChildren)
@@ -300,14 +300,14 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			if (photonView != null)
 			{
 				photonView.destroyedByPhotonNetworkOrQuit = true;
-				this.method_51(photonView);
+				this.UnregisterPhotonView(photonView);
 			}
 		}
 		global::UnityEngine.Object.Destroy(gameObject_0);
 	}
 
 	// Token: 0x06004D06 RID: 19718 RVA: 0x00143654 File Offset: 0x00141854
-	private void method_16(Hashtable hashtable_0, Hashtable hashtable_1, int int_0)
+	private void ApplyRoomAndActorProperties(Hashtable hashtable_0, Hashtable hashtable_1, int int_0)
 	{
 		if (this.Room_0 != null && hashtable_0 != null)
 		{
@@ -321,10 +321,10 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 		{
 			if (int_0 > 0)
 			{
-				PhotonPlayer photonPlayer = this.method_24(int_0);
+				PhotonPlayer photonPlayer = this.GetActorById(int_0);
 				if (photonPlayer != null)
 				{
-					photonPlayer.method_0(this.method_23(hashtable_1, int_0));
+					photonPlayer.method_0(this.UnwrapActorProperties(hashtable_1, int_0));
 				}
 			}
 			else
@@ -334,11 +334,11 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 					int num = (int)obj;
 					Hashtable hashtable = (Hashtable)hashtable_1[obj];
 					string text = (string)hashtable[byte.MaxValue];
-					PhotonPlayer photonPlayer2 = this.method_24(num);
+					PhotonPlayer photonPlayer2 = this.GetActorById(num);
 					if (photonPlayer2 == null)
 					{
 						photonPlayer2 = new PhotonPlayer(false, num, text);
-						this.method_17(num, photonPlayer2);
+						this.AddActor(num, photonPlayer2);
 					}
 					photonPlayer2.method_0(hashtable);
 				}
@@ -347,12 +347,12 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D07 RID: 19719 RVA: 0x000320B6 File Offset: 0x000302B6
-	private void method_17(int int_0, PhotonPlayer photonPlayer_0)
+	private void AddActor(int int_0, PhotonPlayer photonPlayer_0)
 	{
 		if (!this.mActors.ContainsKey(int_0))
 		{
 			this.mActors[int_0] = photonPlayer_0;
-			this.method_19();
+			this.RebuildPlayerListCopies();
 		}
 		else
 		{
@@ -361,19 +361,19 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D08 RID: 19720 RVA: 0x000320F2 File Offset: 0x000302F2
-	private void method_18(int int_0, PhotonPlayer photonPlayer_0)
+	private void RemoveActor(int int_0, PhotonPlayer photonPlayer_0)
 	{
 		this.mActors.Remove(int_0);
 		this.networkingPriority.method_5(photonPlayer_0);
 		this.peerRoundTripTimes.Remove(int_0);
 		if (!photonPlayer_0.isLocal)
 		{
-			this.method_19();
+			this.RebuildPlayerListCopies();
 		}
 	}
 
 	// Token: 0x06004D09 RID: 19721 RVA: 0x0014375C File Offset: 0x0014195C
-	private void method_19()
+	private void RebuildPlayerListCopies()
 	{
 		this.mPlayerListCopy = new PhotonPlayer[this.mActors.Count];
 		this.mActors.Values.CopyTo(this.mPlayerListCopy, 0);
@@ -389,7 +389,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D0A RID: 19722 RVA: 0x001437D0 File Offset: 0x001419D0
-	private void method_20()
+	private void ResetSerializeCaches()
 	{
 		foreach (PhotonView photonView in this.photonViewList.Values)
 		{
@@ -399,7 +399,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D0B RID: 19723 RVA: 0x00143834 File Offset: 0x00141A34
-	private void method_21(int int_0)
+	private void HandleActorLeft(int int_0)
 	{
 		if (base.DebugOut >= DebugLevel.INFO)
 		{
@@ -407,7 +407,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 		}
 		if (int_0 >= 0 && this.mActors.ContainsKey(int_0))
 		{
-			PhotonPlayer photonPlayer = this.method_24(int_0);
+			PhotonPlayer photonPlayer = this.GetActorById(int_0);
 			if (photonPlayer == null)
 			{
 				DebugUtils.LogError(LogCategory.Network, "Error: HandleEventLeave for actorID=" + int_0 + " has no PhotonPlayer!");
@@ -416,12 +416,12 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			{
 				this.mMasterClient = null;
 			}
-			this.method_22(int_0);
+			this.ElectMasterClient(int_0);
 			if (this.Room_0 != null && this.Room_0.Boolean_4)
 			{
 				this.DestroyPlayerObjects(photonPlayer, true);
 			}
-			this.method_18(int_0, photonPlayer);
+			this.RemoveActor(int_0, photonPlayer);
 			NetworkingPeer.SendMonoMessage(PhotonNetworkingMessage.OnPhotonPlayerDisconnected, new object[] { photonPlayer });
 			return;
 		}
@@ -432,7 +432,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D0C RID: 19724 RVA: 0x0014391C File Offset: 0x00141B1C
-	private void method_22(int int_0)
+	private void ElectMasterClient(int int_0)
 	{
 		int num = int.MaxValue;
 		if (this.mMasterClient != null && this.mActors.ContainsKey(this.mMasterClient.ActorId))
@@ -461,7 +461,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D0D RID: 19725 RVA: 0x00032128 File Offset: 0x00030328
-	private Hashtable method_23(Hashtable hashtable_0, int int_0)
+	private Hashtable UnwrapActorProperties(Hashtable hashtable_0, int int_0)
 	{
 		if (hashtable_0.ContainsKey(int_0))
 		{
@@ -471,7 +471,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D0E RID: 19726 RVA: 0x0003214B File Offset: 0x0003034B
-	private PhotonPlayer method_24(int int_0)
+	private PhotonPlayer GetActorById(int int_0)
 	{
 		if (this.mActors != null && this.mActors.ContainsKey(int_0))
 		{
@@ -481,7 +481,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D0F RID: 19727 RVA: 0x001439F0 File Offset: 0x00141BF0
-	private void method_25()
+	private void UpdateLocalPlayerName()
 	{
 		if (this.State == global::PeerState.Joining)
 		{
@@ -493,13 +493,13 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			this.mLocalActor.String_0 = this.playerName;
 			Hashtable hashtable = new Hashtable();
 			hashtable[byte.MaxValue] = this.playerName;
-			this.vmethod_5(this.mLocalActor.ActorId, hashtable, true, 0);
+			this.OpSetActorProperties(this.mLocalActor.ActorId, hashtable, true, 0);
 			this.mPlayernameHasToBeUpdated = false;
 		}
 	}
 
 	// Token: 0x06004D10 RID: 19728 RVA: 0x00143A60 File Offset: 0x00141C60
-	private void method_26(OperationResponse operationResponse_0)
+	private void HandleJoinRoomResponse(OperationResponse operationResponse_0)
 	{
 		if (operationResponse_0.ReturnCode != 0)
 		{
@@ -543,20 +543,20 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			}
 			NetworkingPeer.SendMonoMessage(PhotonNetworkingMessage.OnPhotonJoinRoomFailed, new object[0]);
 			IL_016B:
-			this.method_12();
+			this.DisconnectFromGameServer();
 			return;
 		}
 		this.State = global::PeerState.Joined;
 		this.mRoomToGetInto.isLocalClientInside = true;
 		Hashtable hashtable = (Hashtable)operationResponse_0[249];
 		Hashtable hashtable2 = (Hashtable)operationResponse_0[248];
-		this.method_16(hashtable2, hashtable, 0);
+		this.ApplyRoomAndActorProperties(hashtable2, hashtable, 0);
 		int num = (int)operationResponse_0[254];
-		this.method_28(num);
-		this.method_22(-1);
+		this.SetLocalActorId(num);
+		this.ElectMasterClient(-1);
 		if (this.mPlayernameHasToBeUpdated)
 		{
-			this.method_25();
+			this.UpdateLocalPlayerName();
 		}
 		switch (operationResponse_0.OperationCode)
 		{
@@ -567,7 +567,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D11 RID: 19729 RVA: 0x00143C7C File Offset: 0x00141E7C
-	private Hashtable method_27()
+	private Hashtable BuildLocalPlayerProperties()
 	{
 		if (PhotonNetwork.player != null)
 		{
@@ -579,7 +579,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D12 RID: 19730 RVA: 0x00143CB8 File Offset: 0x00141EB8
-	public void method_28(int int_0)
+	public void SetLocalActorId(int int_0)
 	{
 		if (this.mLocalActor == null)
 		{
@@ -591,18 +591,18 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 		}
 		this.mLocalActor.method_1(int_0);
 		this.mActors[this.mLocalActor.ActorId] = this.mLocalActor;
-		this.method_19();
+		this.RebuildPlayerListCopies();
 	}
 
 	// Token: 0x06004D13 RID: 19731 RVA: 0x00143D58 File Offset: 0x00141F58
-	public bool method_29(string string_0, bool bool_0, bool bool_1, byte byte_0, bool bool_2, Hashtable hashtable_0, string[] string_1)
+	public bool OpCreateRoom(string string_0, bool bool_0, bool bool_1, byte byte_0, bool bool_2, Hashtable hashtable_0, string[] string_1)
 	{
 		this.mRoomToGetInto = new Room(string_0, hashtable_0, bool_0, bool_1, (int)byte_0, bool_2, string_1);
-		return base.vmethod_2(string_0, bool_0, bool_1, byte_0, bool_2, hashtable_0, this.method_27(), string_1);
+		return base.vmethod_2(string_0, bool_0, bool_1, byte_0, bool_2, hashtable_0, this.BuildLocalPlayerProperties(), string_1);
 	}
 
 	// Token: 0x06004D14 RID: 19732 RVA: 0x00032171 File Offset: 0x00030371
-	public bool method_30(Query query_0, int int_0 = 50)
+	public bool OpExecuteQuery(Query query_0, int int_0 = 50)
 	{
 		return base.method_0(query_0.Parameters, query_0.Operations, int_0);
 	}
@@ -642,19 +642,19 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 		{
 			hashtable[238] = this.mFallbackSessions.ToArray();
 		}
-		return this.vmethod_3(string_0, this.method_27(), hashtable);
+		return this.vmethod_3(string_0, this.BuildLocalPlayerProperties(), hashtable);
 	}
 
 	// Token: 0x06004D16 RID: 19734 RVA: 0x00032186 File Offset: 0x00030386
-	public override bool vmethod_4(Hashtable hashtable_0, byte byte_0, Hashtable hashtable_1, MatchmakingMode matchmakingMode_0)
+	public override bool OpJoinRandomRoom(Hashtable hashtable_0, byte byte_0, Hashtable hashtable_1, MatchmakingMode matchmakingMode_0)
 	{
 		DebugUtils.Log(LogCategory.Network, "OpJoinRandomRoom");
 		this.mRoomToGetInto = new Room(null, null);
-		return base.vmethod_4(hashtable_0, byte_0, hashtable_1, matchmakingMode_0);
+		return base.OpJoinRandomRoom(hashtable_0, byte_0, hashtable_1, matchmakingMode_0);
 	}
 
 	// Token: 0x06004D17 RID: 19735 RVA: 0x001440C0 File Offset: 0x001422C0
-	public override bool vmethod_7(string string_0, string string_1, string string_2, string string_3)
+	public override bool OpAuthenticate(string string_0, string string_1, string string_2, string string_3)
 	{
 		Dictionary<byte, object> dictionary = new Dictionary<byte, object>();
 		dictionary[220] = string_1;
@@ -688,7 +688,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D18 RID: 19736 RVA: 0x000321AC File Offset: 0x000303AC
-	public virtual bool vmethod_14()
+	public virtual bool OpCancelJoin()
 	{
 		if (this.State != global::PeerState.Joining)
 		{
@@ -699,7 +699,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D19 RID: 19737 RVA: 0x000321E4 File Offset: 0x000303E4
-	public virtual bool vmethod_15()
+	public virtual bool OpLeaveRoom()
 	{
 		if (this.State != global::PeerState.Joined)
 		{
@@ -710,27 +710,27 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D1A RID: 19738 RVA: 0x0003220C File Offset: 0x0003040C
-	public override bool vmethod_9(byte byte_0, byte byte_1, Hashtable hashtable_0, bool bool_0, byte byte_2)
+	public override bool RaiseEventForGroup(byte byte_0, byte byte_1, Hashtable hashtable_0, bool bool_0, byte byte_2)
 	{
-		return !PhotonNetwork.offlineMode && base.vmethod_9(byte_0, byte_1, hashtable_0, bool_0, byte_2);
+		return !PhotonNetwork.offlineMode && base.RaiseEventForGroup(byte_0, byte_1, hashtable_0, bool_0, byte_2);
 	}
 
 	// Token: 0x06004D1B RID: 19739 RVA: 0x00032224 File Offset: 0x00030424
-	public override bool vmethod_12(byte byte_0, Hashtable hashtable_0, bool bool_0, byte byte_1, int[] int_0, EventCaching eventCaching_0)
+	public override bool RaiseEventToActorsCached(byte byte_0, Hashtable hashtable_0, bool bool_0, byte byte_1, int[] int_0, EventCaching eventCaching_0)
 	{
-		return !PhotonNetwork.offlineMode && base.vmethod_12(byte_0, hashtable_0, bool_0, byte_1, int_0, eventCaching_0);
+		return !PhotonNetwork.offlineMode && base.RaiseEventToActorsCached(byte_0, hashtable_0, bool_0, byte_1, int_0, eventCaching_0);
 	}
 
 	// Token: 0x06004D1C RID: 19740 RVA: 0x0003223E File Offset: 0x0003043E
-	public override bool vmethod_13(byte byte_0, Hashtable hashtable_0, bool bool_0, byte byte_1, EventCaching eventCaching_0, ReceiverGroup receiverGroup_0)
+	public override bool RaiseEvent(byte byte_0, Hashtable hashtable_0, bool bool_0, byte byte_1, EventCaching eventCaching_0, ReceiverGroup receiverGroup_0)
 	{
-		return !PhotonNetwork.offlineMode && base.vmethod_13(byte_0, hashtable_0, bool_0, byte_1, eventCaching_0, receiverGroup_0);
+		return !PhotonNetwork.offlineMode && base.RaiseEvent(byte_0, hashtable_0, bool_0, byte_1, eventCaching_0, receiverGroup_0);
 	}
 
 	// Token: 0x06004D1D RID: 19741 RVA: 0x00032258 File Offset: 0x00030458
-	public override bool vmethod_8(byte[] byte_0, byte[] byte_1)
+	public override bool OpChangeGroups(byte[] byte_0, byte[] byte_1)
 	{
-		return !PhotonNetwork.offlineMode && base.vmethod_8(byte_0, byte_1);
+		return !PhotonNetwork.offlineMode && base.OpChangeGroups(byte_0, byte_1);
 	}
 
 	// Token: 0x06004D1E RID: 19742 RVA: 0x0003226B File Offset: 0x0003046B
@@ -800,7 +800,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			{
 				if (this.State == global::PeerState.Joining)
 				{
-					this.method_26(operationResponse);
+					this.HandleJoinRoomResponse(operationResponse);
 					goto IL_0A25;
 				}
 				if (operationResponse.ReturnCode != 0)
@@ -822,13 +822,13 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 					this.mGameserver = text3 + ":" + array[1];
 				}
 				DebugUtils.Log(LogCategory.Network, "New GameServer: " + this.mGameserver);
-				this.method_11();
+				this.DisconnectFromMasterServer();
 				this.mLastJoinType = JoinType.CreateGame;
 				goto IL_0A25;
 			}
 			case 228:
 				this.State = global::PeerState.Authenticated;
-				this.method_13();
+				this.LeaveLobbyIfInside();
 				goto IL_0A25;
 			case 229:
 				this.State = global::PeerState.JoinedLobby;
@@ -920,7 +920,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 						}
 						if (this.mLastJoinType == JoinType.CreateGame)
 						{
-							this.method_29(this.mRoomToGetInto.String_1, this.mRoomToGetInto.Boolean_3, this.mRoomToGetInto.Boolean_2, (byte)this.mRoomToGetInto.maxPlayers, this.mRoomToGetInto.Boolean_4, this.mRoomToGetInto.Hashtable_0, this.mRoomToGetInto.propertiesListedInLobby);
+							this.OpCreateRoom(this.mRoomToGetInto.String_1, this.mRoomToGetInto.Boolean_3, this.mRoomToGetInto.Boolean_2, (byte)this.mRoomToGetInto.maxPlayers, this.mRoomToGetInto.Boolean_4, this.mRoomToGetInto.Hashtable_0, this.mRoomToGetInto.propertiesListedInLobby);
 							goto IL_0A25;
 						}
 						goto IL_0A25;
@@ -974,7 +974,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			{
 				Hashtable hashtable = (Hashtable)operationResponse[249];
 				Hashtable hashtable2 = (Hashtable)operationResponse[248];
-				this.method_16(hashtable2, hashtable, 0);
+				this.ApplyRoomAndActorProperties(hashtable2, hashtable, 0);
 				goto IL_0A25;
 			}
 			case 252:
@@ -1009,7 +1009,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 				}
 				break;
 			}
-			this.method_12();
+			this.DisconnectFromGameServer();
 			goto IL_0A25;
 			IL_0806:
 			if (this.State != global::PeerState.Joining)
@@ -1068,14 +1068,14 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 							this.mGameserver = text6 + ":" + array2[1];
 						}
 						DebugUtils.Log(LogCategory.Network, "New GameServer: " + this.mGameserver);
-						this.method_11();
+						this.DisconnectFromMasterServer();
 						this.mLastJoinType = JoinType.JoinGame;
 					}
 				}
 			}
 			else
 			{
-				this.method_26(operationResponse);
+				this.HandleJoinRoomResponse(operationResponse);
 			}
 			IL_0A25:;
 		}
@@ -1132,7 +1132,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 				base.EstablishEncryption();
 				goto IL_04DD;
 			}
-			if (!this.vmethod_7(this.mAppId, this.mAppVersion, this.maccount, this.mpwd))
+			if (!this.OpAuthenticate(this.mAppId, this.mAppVersion, this.maccount, this.mpwd))
 			{
 				this.externalListener.DebugReturn(DebugLevel.ERROR, "Error Authenticating! Did not work.");
 				goto IL_04DD;
@@ -1152,7 +1152,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			{
 				if (this.State != global::PeerState.DisconnectingFromGameserver)
 				{
-					this.method_14();
+					this.ResetRoomState();
 					this.State = global::PeerState.PeerCreated;
 					this.Reset();
 					NetworkingPeer.SendMonoMessage(PhotonNetworkingMessage.OnDisconnectedFromPhoton, new object[0]);
@@ -1224,7 +1224,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			this.Disconnect();
 			goto IL_04DD;
 		case StatusCode.EncryptionEstablished:
-			if (!this.vmethod_7(this.mAppId, this.mAppVersion, this.maccount, this.mpwd))
+			if (!this.OpAuthenticate(this.mAppId, this.mAppVersion, this.maccount, this.mpwd))
 			{
 				this.externalListener.DebugReturn(DebugLevel.ERROR, "Error Authenticating! Did not work.");
 				goto IL_04DD;
@@ -1232,7 +1232,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			goto IL_04DD;
 		case StatusCode.EncryptionFailedToEstablish:
 			this.externalListener.DebugReturn(DebugLevel.ERROR, "Encryption wasn't established: " + statusCode + ". Going to authenticate anyways.");
-			if (!this.vmethod_7(this.mAppId, this.mAppVersion, this.maccount, this.mpwd))
+			if (!this.OpAuthenticate(this.mAppId, this.mAppVersion, this.maccount, this.mpwd))
 			{
 				this.externalListener.DebugReturn(DebugLevel.ERROR, "Error Authenticating! Did not work.");
 				goto IL_04DD;
@@ -1289,14 +1289,14 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 					continue;
 				}
 				int num5 = (int)hashtable2[(byte)0];
-				PhotonView photonView = this.method_49(num5);
+				PhotonView photonView = this.GetPhotonViewByID(num5);
 				if (photonView != null)
 				{
 					photonView.OnSerializeRead(hashtable2, photonPlayer, num2, num3);
 				}
 				else if (photonEvent.Code == 206)
 				{
-					this.method_32(num5, hashtable2, photonPlayer, num2, num3);
+					this.StoreDataForMissingView(num5, hashtable2, photonPlayer, num2, num3);
 				}
 				num4 += 1;
 			}
@@ -1322,7 +1322,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 				goto IL_07D3;
 			}
 			int num6 = (int)hashtable3[(byte)0];
-			PhotonView photonView2 = this.method_49(num6);
+			PhotonView photonView2 = this.GetPhotonViewByID(num6);
 			if (photonView2 == null)
 			{
 				DebugUtils.Log(LogCategory.Network, "INFO: This view has already been destroyed. view ID=" + num6);
@@ -1349,7 +1349,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			if (num8 != this.mLocalActor.ActorId)
 			{
 				hashtable4[2] = (byte)this.mLocalActor.ActorId;
-				this.vmethod_11(207, hashtable4, true, 0, new int[] { num8 });
+				this.RaiseEventToActors(207, hashtable4, true, 0, new int[] { num8 });
 				goto IL_07D3;
 			}
 			if (!hashtable4.ContainsKey(2))
@@ -1459,11 +1459,11 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			{
 				hashtable8 = (Hashtable)photonEvent[251];
 			}
-			this.method_16(hashtable7, hashtable8, num11);
+			this.ApplyRoomAndActorProperties(hashtable7, hashtable8, num11);
 			break;
 		}
 		case 254:
-			this.method_21(num);
+			this.HandleActorLeft(num);
 			break;
 		case 255:
 		{
@@ -1471,8 +1471,8 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			if (photonPlayer == null)
 			{
 				bool flag = this.mLocalActor.ActorId == num;
-				this.method_17(num, new PhotonPlayer(flag, num, hashtable9));
-				this.method_20();
+				this.AddActor(num, new PhotonPlayer(flag, num, hashtable9));
+				this.ResetSerializeCaches();
 			}
 			if (this.mActors[num] == this.mLocalActor)
 			{
@@ -1486,7 +1486,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 					if (this.mLocalActor.ActorId != num12 && !this.mActors.ContainsKey(num12))
 					{
 						DebugUtils.Log(LogCategory.Network, "creating player");
-						this.method_17(num12, new PhotonPlayer(false, num12, string.Empty));
+						this.AddActor(num12, new PhotonPlayer(false, num12, string.Empty));
 					}
 				}
 				NetworkingPeer.SendMonoMessage(PhotonNetworkingMessage.OnJoinedRoom, new object[0]);
@@ -1513,7 +1513,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D22 RID: 19746 RVA: 0x00145994 File Offset: 0x00143B94
-	private void method_32(int int_0, Hashtable hashtable_0, PhotonPlayer photonPlayer_0, int int_1, short short_0)
+	private void StoreDataForMissingView(int int_0, Hashtable hashtable_0, PhotonPlayer photonPlayer_0, int int_1, short short_0)
 	{
 		NetworkingPeer.StoredDataForNoView storedDataForNoView = default(NetworkingPeer.StoredDataForNoView);
 		storedDataForNoView.data = hashtable_0;
@@ -1564,7 +1564,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 		{
 			array = new object[0];
 		}
-		PhotonView photonView = this.method_49(num);
+		PhotonView photonView = this.GetPhotonViewByID(num);
 		if (photonView == null)
 		{
 			DebugUtils.LogError(LogCategory.Network, string.Concat(new object[] { "Received RPC \"", text, "\" for viewID ", num, " but this PhotonView does not exist!" }));
@@ -1656,7 +1656,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 							ParameterInfo[] parameters = methodInfo.GetParameters();
 							if (parameters.Length == array2.Length)
 							{
-								if (this.method_34(parameters, array2))
+								if (this.ParameterTypesMatch(parameters, array2))
 								{
 									num4++;
 									object obj2 = methodInfo.Invoke(monoBehaviour, array);
@@ -1668,7 +1668,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 							}
 							else if (parameters.Length - 1 == array2.Length)
 							{
-								if (this.method_34(parameters, array2) && parameters[parameters.Length - 1].ParameterType == typeof(PhotonMessageInfo))
+								if (this.ParameterTypesMatch(parameters, array2) && parameters[parameters.Length - 1].ParameterType == typeof(PhotonMessageInfo))
 								{
 									num4++;
 									int num6 = (int)hashtable_0[(byte)2];
@@ -1737,7 +1737,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D25 RID: 19749 RVA: 0x00146068 File Offset: 0x00144268
-	private bool method_34(ParameterInfo[] parameterInfo_0, Type[] type_0)
+	private bool ParameterTypesMatch(ParameterInfo[] parameterInfo_0, Type[] type_0)
 	{
 		if (parameterInfo_0.Length < type_0.Length)
 		{
@@ -1797,7 +1797,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 		hashtable[(byte)7] = num;
 		EventCaching eventCaching_ = ((!bool_0) ? EventCaching.AddToRoomCache : EventCaching.AddToRoomCacheGlobal);
 		grossInstantiateData += Utils.smethod_8(hashtable);
-		vmethod_13(202, hashtable, bool_0: true, 0, eventCaching_, ReceiverGroup.Others);
+		RaiseEvent(202, hashtable, bool_0: true, 0, eventCaching_, ReceiverGroup.Others);
 		return hashtable;
 	}
 	// Token: 0x06004D27 RID: 19751 RVA: 0x00146210 File Offset: 0x00144410
@@ -1931,7 +1931,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			photonViewsInChildren[k].Int32_0 = (int)num5;
 			photonViewsInChildren[k].instantiationId = num3;
 		}
-		this.method_38(num3, array2);
+		this.StoreTempInstantiationData(num3, array2);
 		GameObject gameObject2 = ResourcesLoader.smethod_7(text, vector, quaternion);
 		for (int l = 0; l < array.Length; l++)
 		{
@@ -1940,7 +1940,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			photonViewsInChildren[l].prefixBackup = -1;
 			photonViewsInChildren[l].instantiationId = -1;
 		}
-		this.method_40(num3);
+		this.ClearTempInstantiationData(num3);
 		if (this.instantiatedObjects.ContainsKey(num3))
 		{
 			GameObject gameObject3 = this.instantiatedObjects[num3];
@@ -1975,7 +1975,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 		};
 		foreach (MonoBehaviour monoBehaviour in gameObject2.GetComponentsInChildren<MonoBehaviour>())
 		{
-			MethodInfo methodInfo = this.method_69(monoBehaviour, PhotonNetworkingMessage.OnPhotonInstantiate);
+			MethodInfo methodInfo = this.FindPhotonCallbackMethod(monoBehaviour, PhotonNetworkingMessage.OnPhotonInstantiate);
 			if (methodInfo != null)
 			{
 				object obj = methodInfo.Invoke(monoBehaviour, array4);
@@ -1989,7 +1989,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D28 RID: 19752 RVA: 0x0014671C File Offset: 0x0014491C
-	private NetworkingPeer.InstantiateState method_37(NetworkingPeer.InstantiatingPhotonViews instantiatingPhotonViews_0)
+	private NetworkingPeer.InstantiateState CompleteDeferredInstantiate(NetworkingPeer.InstantiatingPhotonViews instantiatingPhotonViews_0)
 	{
 		if ((instantiatingPhotonViews_0.group != 0 && !this.allowedReceivingGroups.Contains(instantiatingPhotonViews_0.group)) || this.m_instantiatePending)
 		{
@@ -2007,7 +2007,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 		PhotonView[] components = instantiatingPhotonViews_0.instantiateHelper.GetComponents<PhotonView>();
 		foreach (PhotonView photonView in components)
 		{
-			this.method_51(photonView);
+			this.UnregisterPhotonView(photonView);
 		}
 		PhotonView[] photonViewsInChildren = instantiatingPhotonViews_0.resourceGameObject.GetPhotonViewsInChildren();
 		if (photonViewsInChildren.Length != components.Length)
@@ -2020,7 +2020,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			photonViewsInChildren[j].Int32_0 = instantiatingPhotonViews_0.objLevelPrefix;
 			photonViewsInChildren[j].instantiationId = instantiatingPhotonViews_0.instantiationId;
 		}
-		this.method_38(instantiatingPhotonViews_0.instantiationId, instantiatingPhotonViews_0.incomingInstantiationData);
+		this.StoreTempInstantiationData(instantiatingPhotonViews_0.instantiationId, instantiatingPhotonViews_0.incomingInstantiationData);
 		this.m_instantiatePending = true;
 		GameObject gameObject = ResourcesLoader.smethod_7(instantiatingPhotonViews_0.prefabName, instantiatingPhotonViews_0.position, instantiatingPhotonViews_0.rotation);
 		for (int k = 0; k < components.Length; k++)
@@ -2030,20 +2030,20 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			photonViewsInChildren[k].prefixBackup = -1;
 			photonViewsInChildren[k].instantiationId = -1;
 		}
-		this.method_40(instantiatingPhotonViews_0.instantiationId);
+		this.ClearTempInstantiationData(instantiatingPhotonViews_0.instantiationId);
 		foreach (PhotonView photonView2 in components)
 		{
 			NetworkingPeer.StoredDataForNoView storedDataForNoView;
 			if (this.m_StoredDataForNoView.TryGetValue(photonView2.Int32_1, out storedDataForNoView))
 			{
-				this.method_49(photonView2.Int32_1).lastOnSerializeDataReceived = storedDataForNoView.data;
-				this.method_49(photonView2.Int32_1).OnSerializeRead(storedDataForNoView.data, storedDataForNoView.originatingPlayer, storedDataForNoView.remoteUpdateServerTimestamp, storedDataForNoView.remoteLevelPrefix);
+				this.GetPhotonViewByID(photonView2.Int32_1).lastOnSerializeDataReceived = storedDataForNoView.data;
+				this.GetPhotonViewByID(photonView2.Int32_1).OnSerializeRead(storedDataForNoView.data, storedDataForNoView.originatingPlayer, storedDataForNoView.remoteUpdateServerTimestamp, storedDataForNoView.remoteLevelPrefix);
 				this.m_StoredDataForNoView.Remove(photonView2.Int32_1);
 			}
 			if (photonView2.lastOnSerializeDataReceived != null)
 			{
-				this.method_49(photonView2.Int32_1).lastOnSerializeDataReceived = photonView2.lastOnSerializeDataReceived;
-				this.method_49(photonView2.Int32_1).OnSerializeRead(photonView2.lastOnSerializeDataReceived, instantiatingPhotonViews_0.photonPlayer, instantiatingPhotonViews_0.serverTime, 0);
+				this.GetPhotonViewByID(photonView2.Int32_1).lastOnSerializeDataReceived = photonView2.lastOnSerializeDataReceived;
+				this.GetPhotonViewByID(photonView2.Int32_1).OnSerializeRead(photonView2.lastOnSerializeDataReceived, instantiatingPhotonViews_0.photonPlayer, instantiatingPhotonViews_0.serverTime, 0);
 			}
 			if (photonView2.bufferedRPC.Count != 0)
 			{
@@ -2060,7 +2060,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 		};
 		foreach (MonoBehaviour monoBehaviour in gameObject.GetComponentsInChildren<MonoBehaviour>())
 		{
-			MethodInfo methodInfo = this.method_69(monoBehaviour, PhotonNetworkingMessage.OnPhotonInstantiate);
+			MethodInfo methodInfo = this.FindPhotonCallbackMethod(monoBehaviour, PhotonNetworkingMessage.OnPhotonInstantiate);
 			if (methodInfo != null)
 			{
 				object obj = methodInfo.Invoke(monoBehaviour, array3);
@@ -2078,13 +2078,13 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D29 RID: 19753 RVA: 0x0003227A File Offset: 0x0003047A
-	private void method_38(int int_0, object[] object_0)
+	private void StoreTempInstantiationData(int int_0, object[] object_0)
 	{
 		this.tempInstantiationData[int_0] = object_0;
 	}
 
 	// Token: 0x06004D2A RID: 19754 RVA: 0x00146A8C File Offset: 0x00144C8C
-	public object[] method_39(int int_0)
+	public object[] GetTempInstantiationData(int int_0)
 	{
 		object[] array = null;
 		if (int_0 == 0)
@@ -2096,7 +2096,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D2B RID: 19755 RVA: 0x00032289 File Offset: 0x00030489
-	private void method_40(int int_0)
+	private void ClearTempInstantiationData(int int_0)
 	{
 		this.tempInstantiationData.Remove(int_0);
 	}
@@ -2110,7 +2110,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 		{
 			if (!(gameObject == null))
 			{
-				this.method_43(gameObject, false);
+				this.RemoveInstantiatedObject(gameObject, false);
 			}
 		}
 		if (this.instantiatedObjects.Count > 0)
@@ -2135,7 +2135,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 					PhotonView photonView = componentsInChildren[j];
 					if (photonView.Int32_2 == photonPlayer_0.ActorId)
 					{
-						this.method_43(gameObject, bool_0);
+						this.RemoveInstantiatedObject(gameObject, bool_0);
 						break;
 					}
 				}
@@ -2144,7 +2144,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D2E RID: 19758 RVA: 0x00146BB0 File Offset: 0x00144DB0
-	public void method_43(GameObject gameObject_0, bool bool_0)
+	public void RemoveInstantiatedObject(GameObject gameObject_0, bool bool_0)
 	{
 		if (gameObject_0 == null)
 		{
@@ -2154,7 +2154,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			}
 			return;
 		}
-		int num = this.method_44(gameObject_0);
+		int num = this.GetInstantiatedObjectsId(gameObject_0);
 		if (num == -1)
 		{
 			if (base.DebugOut == DebugLevel.ERROR)
@@ -2177,11 +2177,11 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 		{
 			this.DebugReturn(DebugLevel.ALL, "Network destroy Instantiated GO: " + gameObject_0.name);
 		}
-		this.method_15(gameObject_0);
+		this.DestroyInstantiatedObject(gameObject_0);
 	}
 
 	// Token: 0x06004D2F RID: 19759 RVA: 0x00146C68 File Offset: 0x00144E68
-	public int method_44(GameObject gameObject_0)
+	public int GetInstantiatedObjectsId(GameObject gameObject_0)
 	{
 		int num = -1;
 		if (gameObject_0 == null)
@@ -2206,13 +2206,13 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	{
 		Hashtable hashtable = new Hashtable();
 		hashtable[(byte)7] = int_0;
-		this.vmethod_12(202, hashtable, true, 0, new int[] { int_1 }, EventCaching.RemoveFromRoomCache);
+		this.RaiseEventToActorsCached(202, hashtable, true, 0, new int[] { int_1 }, EventCaching.RemoveFromRoomCache);
 	}
 
 	// Token: 0x06004D31 RID: 19761 RVA: 0x00146D10 File Offset: 0x00144F10
-	private void method_46(int int_0)
+	private void RemoveAllCachedInstantiatesForActor(int int_0)
 	{
-		this.vmethod_12(202, null, true, 0, new int[] { int_0 }, EventCaching.RemoveFromRoomCache);
+		this.RaiseEventToActorsCached(202, null, true, 0, new int[] { int_0 }, EventCaching.RemoveFromRoomCache);
 	}
 
 	// Token: 0x06004D32 RID: 19762 RVA: 0x00146D38 File Offset: 0x00144F38
@@ -2238,7 +2238,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 		{
 			Hashtable hashtable = new Hashtable();
 			hashtable[(byte)0] = photonView_0.Int32_1;
-			this.vmethod_13(204, hashtable, true, 0, EventCaching.DoNotCache, ReceiverGroup.Others);
+			this.RaiseEvent(204, hashtable, true, 0, EventCaching.DoNotCache, ReceiverGroup.Others);
 		}
 		if (photonView_0.Boolean_1 || this.mMasterClient == this.mLocalActor)
 		{
@@ -2253,11 +2253,11 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 		{
 			this.DebugReturn(DebugLevel.ALL, "Network destroy PhotonView GO: " + photonView_0.gameObject.name);
 		}
-		this.method_15(photonView_0.gameObject);
+		this.DestroyInstantiatedObject(photonView_0.gameObject);
 	}
 
 	// Token: 0x06004D34 RID: 19764 RVA: 0x00146E54 File Offset: 0x00145054
-	public PhotonView method_49(int int_0)
+	public PhotonView GetPhotonViewByID(int int_0)
 	{
 		PhotonView photonView = null;
 		this.photonViewList.TryGetValue(int_0, out photonView);
@@ -2276,7 +2276,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D35 RID: 19765 RVA: 0x00146EBC File Offset: 0x001450BC
-	public void method_50(PhotonView photonView_0)
+	public void RegisterPhotonView(PhotonView photonView_0)
 	{
 		if (!Application.isPlaying)
 		{
@@ -2337,7 +2337,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D36 RID: 19766 RVA: 0x001470F0 File Offset: 0x001452F0
-	public void method_51(PhotonView photonView_0)
+	public void UnregisterPhotonView(PhotonView photonView_0)
 	{
 		if (!Application.isPlaying)
 		{
@@ -2360,13 +2360,13 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	// Token: 0x06004D37 RID: 19767 RVA: 0x00147184 File Offset: 0x00145384
 	public void RemoveRPCs(int int_0)
 	{
-		this.vmethod_12(200, null, true, 0, new int[] { int_0 }, EventCaching.RemoveFromRoomCache);
+		this.RaiseEventToActorsCached(200, null, true, 0, new int[] { int_0 }, EventCaching.RemoveFromRoomCache);
 	}
 
 	// Token: 0x06004D38 RID: 19768 RVA: 0x001471AC File Offset: 0x001453AC
 	public void RemoveCompleteCacheOfPlayer(int int_0)
 	{
-		this.vmethod_12(0, null, true, 0, new int[] { int_0 }, EventCaching.RemoveFromRoomCache);
+		this.RaiseEventToActorsCached(0, null, true, 0, new int[] { int_0 }, EventCaching.RemoveFromRoomCache);
 	}
 
 	// Token: 0x06004D39 RID: 19769 RVA: 0x001471D0 File Offset: 0x001453D0
@@ -2388,7 +2388,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 		}
 		Hashtable hashtable = new Hashtable();
 		hashtable[(byte)0] = photonView_0.Int32_1;
-		this.vmethod_13(200, hashtable, true, 0, EventCaching.RemoveFromRoomCache, ReceiverGroup.Others);
+		this.RaiseEvent(200, hashtable, true, 0, EventCaching.RemoveFromRoomCache, ReceiverGroup.Others);
 	}
 
 	// Token: 0x06004D3B RID: 19771 RVA: 0x001472A4 File Offset: 0x001454A4
@@ -2453,7 +2453,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 				photonView_0.method_15(string_0, Utils.smethod_8(hashtable));
 			}
 			int[] array = new int[] { photonPlayer_0.ActorId };
-			this.vmethod_11(200, hashtable, bool_0, 0, array);
+			this.RaiseEventToActors(200, hashtable, bool_0, 0, array);
 		}
 	}
 
@@ -2495,7 +2495,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			{
 				photonView_0.method_15(string_0, Utils.smethod_8(hashtable));
 			}
-			this.vmethod_9(200, (byte)photonView_0.group, hashtable, bool_0, 0);
+			this.RaiseEventForGroup(200, (byte)photonView_0.group, hashtable, bool_0, 0);
 			this.ProcessIncomingRPC(hashtable, this.mLocalActor);
 		}
 		else if (photonTargets_0 == PhotonTargets.Others)
@@ -2504,7 +2504,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			{
 				photonView_0.method_15(string_0, Utils.smethod_8(hashtable));
 			}
-			this.vmethod_9(200, (byte)photonView_0.group, hashtable, bool_0, 0);
+			this.RaiseEventForGroup(200, (byte)photonView_0.group, hashtable, bool_0, 0);
 		}
 		else if (photonTargets_0 == PhotonTargets.AllBuffered)
 		{
@@ -2512,7 +2512,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			{
 				photonView_0.method_15(string_0, Utils.smethod_8(hashtable));
 			}
-			this.vmethod_13(200, hashtable, bool_0, 0, EventCaching.AddToRoomCache, ReceiverGroup.Others);
+			this.RaiseEvent(200, hashtable, bool_0, 0, EventCaching.AddToRoomCache, ReceiverGroup.Others);
 			this.ProcessIncomingRPC(hashtable, this.mLocalActor);
 		}
 		else if (photonTargets_0 == PhotonTargets.OthersBuffered)
@@ -2521,7 +2521,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			{
 				photonView_0.method_15(string_0, Utils.smethod_8(hashtable));
 			}
-			this.vmethod_13(200, hashtable, bool_0, 0, EventCaching.AddToRoomCache, ReceiverGroup.Others);
+			this.RaiseEvent(200, hashtable, bool_0, 0, EventCaching.AddToRoomCache, ReceiverGroup.Others);
 		}
 		else if (photonTargets_0 == PhotonTargets.MasterClient)
 		{
@@ -2535,7 +2535,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 				{
 					photonView_0.method_15(string_0, Utils.smethod_8(hashtable));
 				}
-				this.vmethod_13(200, hashtable, bool_0, 0, EventCaching.DoNotCache, ReceiverGroup.MasterClient);
+				this.RaiseEvent(200, hashtable, bool_0, 0, EventCaching.DoNotCache, ReceiverGroup.MasterClient);
 			}
 		}
 		else
@@ -2558,14 +2558,14 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			{
 				this.allowedReceivingGroups.Add(int_0);
 				byte[] array = new byte[] { (byte)int_0 };
-				this.vmethod_8(null, array);
+				this.OpChangeGroups(null, array);
 			}
 		}
 		else if (this.allowedReceivingGroups.Contains(int_0))
 		{
 			this.allowedReceivingGroups.Remove(int_0);
 			byte[] array2 = new byte[] { (byte)int_0 };
-			this.vmethod_8(array2, null);
+			this.OpChangeGroups(array2, null);
 		}
 	}
 
@@ -2583,7 +2583,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D41 RID: 19777 RVA: 0x0014775C File Offset: 0x0014595C
-	public void method_62()
+	public void PurgeDestroyedSceneViews()
 	{
 		if (this.loadingLevelAndPausedNetwork && !PhotonNetwork.isMessageQueueRunning)
 		{
@@ -2602,7 +2602,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 		for (int i = 0; i < list.Count; i++)
 		{
 			int num = list[i];
-			this.method_51(this.method_49(num));
+			this.UnregisterPhotonView(this.GetPhotonViewByID(num));
 		}
 		if (list.Count > 0 && base.DebugOut >= DebugLevel.INFO)
 		{
@@ -2611,7 +2611,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D42 RID: 19778 RVA: 0x00147848 File Offset: 0x00145A48
-	public void method_63()
+	public void ProcessPendingInstantiates()
 	{
 		for (int i = 0; i < this.instantiatingPhotonViews.Count; i++)
 		{
@@ -2636,7 +2636,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 				m_instantiatePending = false;
 				try
 				{
-					InstantiateState instantiateState = method_37(instantiatingPhotonViews);
+					InstantiateState instantiateState = CompleteDeferredInstantiate(instantiatingPhotonViews);
 					if (instantiateState != InstantiateState.Pending)
 					{
 						removingInstantiatingPhotonViews.Add(instantiatingPhotonViews);
@@ -2680,7 +2680,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 		{
 			if (this.m_viewUpdateCount % this.m_pingChannel.m_sendingInterval == 0)
 			{
-				this.method_67();
+				this.SendPingUpdate();
 			}
 			int count = this.photonActiveViews.Count;
 			for (int i = 0; i < count; i++)
@@ -2695,18 +2695,18 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			}
 			if (MonoSingleton<Session>.Instance != null && MonoSingleton<Session>.Instance.method_16())
 			{
-				this.method_65();
+				this.BroadcastGridViewUpdates();
 			}
 			else
 			{
-				this.method_66(false);
+				this.BroadcastViewUpdatesToPlayers(false);
 			}
 			return;
 		}
 	}
 
 	// Token: 0x06004D44 RID: 19780 RVA: 0x00147B40 File Offset: 0x00145D40
-	private void method_65()
+	private void BroadcastGridViewUpdates()
 	{
 		Dictionary<int, Hashtable> dictionary = new Dictionary<int, Hashtable>();
 		Dictionary<int, Hashtable> dictionary2 = new Dictionary<int, Hashtable>();
@@ -2765,11 +2765,11 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 					}
 					foreach (KeyValuePair<int, Hashtable> keyValuePair in dictionary)
 					{
-						this.vmethod_9(206, grid.m_id, keyValuePair.Value, true, 0);
+						this.RaiseEventForGroup(206, grid.m_id, keyValuePair.Value, true, 0);
 					}
 					foreach (KeyValuePair<int, Hashtable> keyValuePair2 in dictionary2)
 					{
-						this.vmethod_9(206, grid.m_id, keyValuePair2.Value, false, 0);
+						this.RaiseEventForGroup(206, grid.m_id, keyValuePair2.Value, false, 0);
 					}
 					list = grid.m_views;
 					num = list.Count;
@@ -2813,11 +2813,11 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 					}
 					foreach (KeyValuePair<int, Hashtable> keyValuePair3 in dictionary)
 					{
-						this.vmethod_11(206, keyValuePair3.Value, true, 0, grid.m_newcomersID.ToArray());
+						this.RaiseEventToActors(206, keyValuePair3.Value, true, 0, grid.m_newcomersID.ToArray());
 					}
 					foreach (KeyValuePair<int, Hashtable> keyValuePair4 in dictionary2)
 					{
-						this.vmethod_11(201, keyValuePair4.Value, false, 1, grid.m_newcomersID.ToArray());
+						this.RaiseEventToActors(201, keyValuePair4.Value, false, 1, grid.m_newcomersID.ToArray());
 					}
 				}
 				if (grid.m_settlersID.Count != 0)
@@ -2872,7 +2872,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 						byte b = 206;
 						byte id = grid.m_id;
 						KeyValuePair<int, Hashtable> keyValuePair5 = enumerator5.Current;
-						this.vmethod_9(b, id, keyValuePair5.Value, true, 0);
+						this.RaiseEventForGroup(b, id, keyValuePair5.Value, true, 0);
 					}
 					Dictionary<int, Hashtable>.Enumerator enumerator6 = dictionary2.GetEnumerator();
 					while (enumerator6.MoveNext())
@@ -2880,7 +2880,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 						byte b2 = 201;
 						byte id2 = grid.m_id;
 						KeyValuePair<int, Hashtable> keyValuePair6 = enumerator6.Current;
-						this.vmethod_9(b2, id2, keyValuePair6.Value, false, 1);
+						this.RaiseEventForGroup(b2, id2, keyValuePair6.Value, false, 1);
 					}
 				}
 				grid.OnNetworkingUpdated();
@@ -2904,14 +2904,14 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 							Hashtable hashtable11 = new Hashtable();
 							hashtable11[(byte)0] = base.ServerTimeInMilliSeconds;
 							hashtable11[(short)1] = hashtable10;
-							this.vmethod_11(201, hashtable11, false, 1, array);
+							this.RaiseEventToActors(201, hashtable11, false, 1, array);
 							goto IL_0780;
 						}
 					}
 					Hashtable hashtable12 = new Hashtable();
 					hashtable12[(byte)0] = base.ServerTimeInMilliSeconds;
 					hashtable12[(short)1] = hashtable10;
-					this.vmethod_11(206, hashtable12, true, 0, array);
+					this.RaiseEventToActors(206, hashtable12, true, 0, array);
 				}
 			}
 			IL_0780:;
@@ -2919,7 +2919,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D45 RID: 19781 RVA: 0x0014831C File Offset: 0x0014651C
-	public void method_66(bool bool_0 = false)
+	public void BroadcastViewUpdatesToPlayers(bool bool_0 = false)
 	{
 		Dictionary<int, Hashtable> dictionary = new Dictionary<int, Hashtable>();
 		Dictionary<int, Hashtable> dictionary2 = new Dictionary<int, Hashtable>();
@@ -3019,14 +3019,14 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 			{
 				byte b = 206;
 				KeyValuePair<int, Hashtable> keyValuePair = enumerator.Current;
-				this.vmethod_11(b, keyValuePair.Value, true, 1, array);
+				this.RaiseEventToActors(b, keyValuePair.Value, true, 1, array);
 			}
 			Dictionary<int, Hashtable>.Enumerator enumerator2 = dictionary2.GetEnumerator();
 			while (enumerator2.MoveNext())
 			{
 				byte b2 = 201;
 				KeyValuePair<int, Hashtable> keyValuePair2 = enumerator2.Current;
-				this.vmethod_11(b2, keyValuePair2.Value, false, 2, array);
+				this.RaiseEventToActors(b2, keyValuePair2.Value, false, 2, array);
 			}
 			num2++;
 		}
@@ -3038,7 +3038,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D46 RID: 19782 RVA: 0x001486B0 File Offset: 0x001468B0
-	public void method_67()
+	public void SendPingUpdate()
 	{
 		if (this.mLocalActor == null)
 		{
@@ -3057,17 +3057,17 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 				this.m_roundTripEvent[0] = Time.realtimeSinceStartup;
 				this.m_roundTripEvent[1] = (byte)this.mLocalActor.ActorId;
 				int[] array = new int[] { this.mOtherPlayerListCopy[i].ActorId };
-				this.vmethod_11(207, this.m_roundTripEvent, true, 0, array);
+				this.RaiseEventToActors(207, this.m_roundTripEvent, true, 0, array);
 				i++;
 			}
 		}
 	}
 
 	// Token: 0x06004D47 RID: 19783 RVA: 0x00148774 File Offset: 0x00146974
-	public void method_68(MonoBehaviour monoBehaviour_0, PhotonStream photonStream_0, PhotonMessageInfo photonMessageInfo_0)
+	public void InvokeSerializeViewCallback(MonoBehaviour monoBehaviour_0, PhotonStream photonStream_0, PhotonMessageInfo photonMessageInfo_0)
 	{
 		object[] array = new object[] { photonStream_0, photonMessageInfo_0 };
-		MethodInfo methodInfo = this.method_69(monoBehaviour_0, PhotonNetworkingMessage.OnPhotonSerializeView);
+		MethodInfo methodInfo = this.FindPhotonCallbackMethod(monoBehaviour_0, PhotonNetworkingMessage.OnPhotonSerializeView);
 		if (methodInfo != null)
 		{
 			object obj = methodInfo.Invoke(monoBehaviour_0, array);
@@ -3089,7 +3089,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D48 RID: 19784 RVA: 0x001487FC File Offset: 0x001469FC
-	public MethodInfo method_69(MonoBehaviour monoBehaviour_0, PhotonNetworkingMessage photonNetworkingMessage_0)
+	public MethodInfo FindPhotonCallbackMethod(MonoBehaviour monoBehaviour_0, PhotonNetworkingMessage photonNetworkingMessage_0)
 	{
 		Type type = monoBehaviour_0.GetType();
 		if (!this.cachedMethods.ContainsKey(type))
@@ -3140,7 +3140,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D49 RID: 19785 RVA: 0x000322C2 File Offset: 0x000304C2
-	public void method_70()
+	public void ResetViewPriorities()
 	{
 		this.networkingPriority.method_0();
 	}
@@ -3159,7 +3159,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D4B RID: 19787 RVA: 0x0014895C File Offset: 0x00146B5C
-	public void method_72()
+	public void ResetNetworkStatistics()
 	{
 		for (int i = 0; i < this.photonViews.Count; i++)
 		{
@@ -3175,7 +3175,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D4C RID: 19788 RVA: 0x00148A08 File Offset: 0x00146C08
-	public List<PhotonView> method_73()
+	public List<PhotonView> GetSortedPhotonViewsBySent()
 	{
 		List<PhotonView> list = new List<PhotonView>();
 		list.AddRange(this.photonViews);
@@ -3184,7 +3184,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D4D RID: 19789 RVA: 0x00148A4C File Offset: 0x00146C4C
-	public List<PhotonView> method_74()
+	public List<PhotonView> GetSortedPhotonViewsByReceived()
 	{
 		List<PhotonView> list = new List<PhotonView>();
 		list.AddRange(this.photonViews);
@@ -3193,7 +3193,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D4E RID: 19790 RVA: 0x00148A90 File Offset: 0x00146C90
-	public int method_75()
+	public int GetTotalSentBytes()
 	{
 		int num = this.grossInstantiateData;
 		for (int i = 0; i < this.photonViews.Count; i++)
@@ -3213,7 +3213,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	public int grossInstantiateData { get; private set; }
 
 	// Token: 0x06004D51 RID: 19793 RVA: 0x00148B30 File Offset: 0x00146D30
-	public int method_76()
+	public int GetTotalReceivedBytes()
 	{
 		int num = this.grossInstantiateDataRCV;
 		for (int i = 0; i < this.photonViews.Count; i++)
@@ -3233,7 +3233,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	public int grossInstantiateDataRCV { get; private set; }
 
 	// Token: 0x06004D54 RID: 19796 RVA: 0x000322F1 File Offset: 0x000304F1
-	public void method_77(byte byte_0, EventCallback eventCallback_0)
+	public void RegisterEventCallback(byte byte_0, EventCallback eventCallback_0)
 	{
 		if (this.mEventCallbacks.ContainsKey(byte_0))
 		{
@@ -3243,13 +3243,13 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D55 RID: 19797 RVA: 0x00032329 File Offset: 0x00030529
-	public void method_78(byte byte_0)
+	public void UnregisterEventCallback(byte byte_0)
 	{
 		this.mEventCallbacks.Remove(byte_0);
 	}
 
 	// Token: 0x06004D56 RID: 19798 RVA: 0x00032338 File Offset: 0x00030538
-	public bool method_79(byte byte_0, OperationResponseCallback operationResponseCallback_0)
+	public bool RegisterOperationResponseCallback(byte byte_0, OperationResponseCallback operationResponseCallback_0)
 	{
 		if (this.mOperationResponseCallbacks.ContainsKey(byte_0))
 		{
@@ -3260,27 +3260,27 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
 	}
 
 	// Token: 0x06004D57 RID: 19799 RVA: 0x00032358 File Offset: 0x00030558
-	public void method_80(byte byte_0)
+	public void UnregisterOperationResponseCallback(byte byte_0)
 	{
 		this.mOperationResponseCallbacks.Remove(byte_0);
 	}
 
 	// Token: 0x06004D58 RID: 19800 RVA: 0x00148BD0 File Offset: 0x00146DD0
-	public bool method_81(byte byte_0, params object[] object_0)
+	public bool OpCustomWithArgs(byte byte_0, params object[] object_0)
 	{
 		Dictionary<byte, object> customOpParameters = Enumerable.Range(0, object_0.Length).ToDictionary((int int_0) => (byte)int_0, (int int_0) => object_0[int_0]);
 		return OpCustom(byte_0, customOpParameters, sendReliable: true);
 	}
 	// Token: 0x06004D59 RID: 19801 RVA: 0x00032367 File Offset: 0x00030567
-	public override bool vmethod_6(Hashtable hashtable_0, bool bool_0, byte byte_0)
+	public override bool OpSetRoomProperties(Hashtable hashtable_0, bool bool_0, byte byte_0)
 	{
-		return !this.MasterConnection && base.vmethod_6(hashtable_0, bool_0, byte_0);
+		return !this.MasterConnection && base.OpSetRoomProperties(hashtable_0, bool_0, byte_0);
 	}
 
 	// Token: 0x06004D5A RID: 19802 RVA: 0x0003237C File Offset: 0x0003057C
-	protected override bool vmethod_5(int int_0, Hashtable hashtable_0, bool bool_0, byte byte_0)
+	protected override bool OpSetActorProperties(int int_0, Hashtable hashtable_0, bool bool_0, byte byte_0)
 	{
-		return !this.MasterConnection && base.vmethod_5(int_0, hashtable_0, bool_0, byte_0);
+		return !this.MasterConnection && base.OpSetActorProperties(int_0, hashtable_0, bool_0, byte_0);
 	}
 
 	// Token: 0x06004D5B RID: 19803 RVA: 0x00032393 File Offset: 0x00030593

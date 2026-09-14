@@ -33,9 +33,9 @@ internal class LobbyService : OnAccessSingleton<ILobbyService, LobbyService, Lob
 		PhotonNetwork.onlinePeer.method_7(190, new EventCallback(this.OnLobbyOwnerChangeEvent));
 		PhotonNetwork.onlinePeer.method_7(189, new EventCallback(this.OnGroupJoinedLobbyEvent));
 		PhotonNetwork.onlinePeer.method_7(188, new EventCallback(this.OnGroupLeaveLobbyEvent));
-		PhotonNetwork.networkingPeer.method_79(124, new OperationResponseCallback(this.OnAcceptLobbyGameInvitation));
-		PhotonNetwork.networkingPeer.method_79(122, new OperationResponseCallback(this.OnSetPlayerTeamIDResponse));
-		PhotonNetwork.networkingPeer.method_77(192, new EventCallback(this.OnPvPGameCreatedEvent));
+		PhotonNetwork.networkingPeer.RegisterOperationResponseCallback(124, new OperationResponseCallback(this.OnAcceptLobbyGameInvitation));
+		PhotonNetwork.networkingPeer.RegisterOperationResponseCallback(122, new OperationResponseCallback(this.OnSetPlayerTeamIDResponse));
+		PhotonNetwork.networkingPeer.RegisterEventCallback(192, new EventCallback(this.OnPvPGameCreatedEvent));
 		OnAccessSingleton<IMessagingService, MessagingService, MessagingServiceOffline>.Prop_0.imethod_5("lobby_invite", new OnRecieveMessage(this.OnLobbyInvitationReceived));
 		this.mOnSubmitPvPResults = new List<OnSubmitPvPResults>();
 		this.mOnPlayerJoinLobby = new List<OnPlayerJoinLobby>();
@@ -364,7 +364,7 @@ internal class LobbyService : OnAccessSingleton<ILobbyService, LobbyService, Lob
 		}
 		else
 		{
-			PhotonNetwork.networkingPeer.method_81(124, new object[0]);
+			PhotonNetwork.networkingPeer.OpCustomWithArgs(124, new object[0]);
 			this.mOnLobbyGameStart.ForEach(new Action<OnLobbyGameStart>(LobbyService.smethod_0));
 		}
 	}
@@ -603,7 +603,7 @@ internal class LobbyService : OnAccessSingleton<ILobbyService, LobbyService, Lob
 	public void method_2(OnSetPlayerTeamID onSetPlayerTeamID_0, int int_0, int int_1)
 	{
 		this.mOnSetPlayerTeamID = onSetPlayerTeamID_0;
-		PhotonNetwork.networkingPeer.method_81(122, new object[] { int_0, int_1 });
+		PhotonNetwork.networkingPeer.OpCustomWithArgs(122, new object[] { int_0, int_1 });
 	}
 
 	// Token: 0x060017B9 RID: 6073 RVA: 0x00011A66 File Offset: 0x0000FC66

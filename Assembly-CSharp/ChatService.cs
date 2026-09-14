@@ -11,8 +11,8 @@ internal class ChatService : OnAccessSingleton<IChatService, ChatService, ChatSe
 		PhotonNetwork.onlinePeer.method_5(139, new OperationResponseCallback(this.OnChated));
 		PhotonNetwork.onlinePeer.method_7(199, new EventCallback(this.OnNewchated));
 		PhotonNetwork.onlinePeer.method_7(198, new EventCallback(this.OnSendChatOk));
-		PhotonNetwork.networkingPeer.method_79(139, new OperationResponseCallback(this.OnGameChated));
-		PhotonNetwork.networkingPeer.method_77(199, new EventCallback(this.OnGameNewchated));
+		PhotonNetwork.networkingPeer.RegisterOperationResponseCallback(139, new OperationResponseCallback(this.OnGameChated));
+		PhotonNetwork.networkingPeer.RegisterEventCallback(199, new EventCallback(this.OnGameNewchated));
 	}
 
 	// Token: 0x060015E2 RID: 5602 RVA: 0x0000311B File Offset: 0x0000131B

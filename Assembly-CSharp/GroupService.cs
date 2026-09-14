@@ -24,9 +24,9 @@ public class GroupService : OnAccessSingleton<IGroupService, GroupService, Group
 		PhotonNetwork.onlinePeer.method_7(211, new EventCallback(this.OnGroupMemberLeftEvent));
 		PhotonNetwork.onlinePeer.method_7(210, new EventCallback(this.OnGroupGameStarted));
 		PhotonNetwork.onlinePeer.method_7(209, new EventCallback(this.OnGroupDisbanded));
-		PhotonNetwork.networkingPeer.method_77(165, new EventCallback(this.OnGroupMatchmakingStarted));
-		PhotonNetwork.networkingPeer.method_79(199, new OperationResponseCallback(this.OnGameInvitationAccepted));
-		PhotonNetwork.networkingPeer.method_77(210, new EventCallback(this.OnHostCreated));
+		PhotonNetwork.networkingPeer.RegisterEventCallback(165, new EventCallback(this.OnGroupMatchmakingStarted));
+		PhotonNetwork.networkingPeer.RegisterOperationResponseCallback(199, new OperationResponseCallback(this.OnGameInvitationAccepted));
+		PhotonNetwork.networkingPeer.RegisterEventCallback(210, new EventCallback(this.OnHostCreated));
 		OnAccessSingleton<IMessagingService, MessagingService, MessagingServiceOffline>.Prop_0.imethod_5("group_invitation", new OnRecieveMessage(this.OnGroupInvitationReceived));
 	}
 
@@ -364,7 +364,7 @@ public class GroupService : OnAccessSingleton<IGroupService, GroupService, Group
 	// Token: 0x0600166B RID: 5739 RVA: 0x0001087D File Offset: 0x0000EA7D
 	private void OnGroupGameStarted(Dictionary<byte, object> parameters)
 	{
-		PhotonNetwork.networkingPeer.method_81(199, new object[0]);
+		PhotonNetwork.networkingPeer.OpCustomWithArgs(199, new object[0]);
 	}
 
 	// Token: 0x0600166C RID: 5740 RVA: 0x0007BFC4 File Offset: 0x0007A1C4

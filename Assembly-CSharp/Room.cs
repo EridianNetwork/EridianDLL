@@ -87,7 +87,7 @@ public class Room : RoomInfo
 			}
 			if (value != (int)this.maxPlayersField && !PhotonNetwork.offlineMode)
 			{
-				PhotonNetwork.networkingPeer.vmethod_6(new Hashtable { 
+				PhotonNetwork.networkingPeer.OpSetRoomProperties(new Hashtable { 
 				{
 					byte.MaxValue,
 					(byte)value
@@ -114,7 +114,7 @@ public class Room : RoomInfo
 			}
 			if (value != this.openField && !PhotonNetwork.offlineMode)
 			{
-				PhotonNetwork.networkingPeer.vmethod_6(new Hashtable { { 253, value } }, true, 0);
+				PhotonNetwork.networkingPeer.OpSetRoomProperties(new Hashtable { { 253, value } }, true, 0);
 			}
 			this.openField = value;
 		}
@@ -137,7 +137,7 @@ public class Room : RoomInfo
 			}
 			if (value != this.visibleField && !PhotonNetwork.offlineMode)
 			{
-				PhotonNetwork.networkingPeer.vmethod_6(new Hashtable { { 254, value } }, true, 0);
+				PhotonNetwork.networkingPeer.OpSetRoomProperties(new Hashtable { { 254, value } }, true, 0);
 			}
 			this.visibleField = value;
 		}

@@ -539,7 +539,7 @@ public class NetworkManager : global::Photon.MonoBehaviour
 			PhotonNetwork.onlinePeer.method_5(230, new OperationResponseCallback(this.OnAuthenticate));
 			PhotonNetwork.networkingPeer.maccount = this.m_login;
 			PhotonNetwork.networkingPeer.mpwd = ((this.m_pwd != string.Empty) ? this.m_pwd : "*");
-			PhotonNetwork.networkingPeer.vmethod_7(PhotonNetwork.networkingPeer.mAppId, PhotonNetwork.networkingPeer.mAppVersion, PhotonNetwork.networkingPeer.maccount, PhotonNetwork.networkingPeer.mpwd);
+			PhotonNetwork.networkingPeer.OpAuthenticate(PhotonNetwork.networkingPeer.mAppId, PhotonNetwork.networkingPeer.mAppVersion, PhotonNetwork.networkingPeer.maccount, PhotonNetwork.networkingPeer.mpwd);
 		}
 
 		// Token: 0x06004AED RID: 19181 RVA: 0x001377AC File Offset: 0x001359AC

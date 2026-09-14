@@ -103,7 +103,7 @@ internal class LoadbalancingPeer : PhotonPeer
 	}
 
 	// Token: 0x06004CCB RID: 19659 RVA: 0x00142C84 File Offset: 0x00140E84
-	public virtual bool vmethod_4(Hashtable hashtable_0, byte byte_0, Hashtable hashtable_1, MatchmakingMode matchmakingMode_0)
+	public virtual bool OpJoinRandomRoom(Hashtable hashtable_0, byte byte_0, Hashtable hashtable_1, MatchmakingMode matchmakingMode_0)
 	{
 		if (base.DebugOut >= DebugLevel.INFO)
 		{
@@ -148,11 +148,11 @@ internal class LoadbalancingPeer : PhotonPeer
 	// Token: 0x06004CCE RID: 19662 RVA: 0x00031F1C File Offset: 0x0003011C
 	public bool method_3(int int_0, Hashtable hashtable_0, bool bool_0, byte byte_0)
 	{
-		return this.vmethod_5(int_0, hashtable_0.StripToStringKeys(), bool_0, byte_0);
+		return this.OpSetActorProperties(int_0, hashtable_0.StripToStringKeys(), bool_0, byte_0);
 	}
 
 	// Token: 0x06004CCF RID: 19663 RVA: 0x00142DA8 File Offset: 0x00140FA8
-	protected virtual bool vmethod_5(int int_0, Hashtable hashtable_0, bool bool_0, byte byte_0)
+	protected virtual bool OpSetActorProperties(int int_0, Hashtable hashtable_0, bool bool_0, byte byte_0)
 	{
 		if (base.DebugOut >= DebugLevel.INFO)
 		{
@@ -173,17 +173,17 @@ internal class LoadbalancingPeer : PhotonPeer
 	{
 		Hashtable hashtable = new Hashtable();
 		hashtable[byte_0] = object_0;
-		this.vmethod_6(hashtable, true, 0);
+		this.OpSetRoomProperties(hashtable, true, 0);
 	}
 
 	// Token: 0x06004CD1 RID: 19665 RVA: 0x00031F2E File Offset: 0x0003012E
 	public bool method_5(Hashtable hashtable_0, bool bool_0, byte byte_0)
 	{
-		return this.vmethod_6(hashtable_0.StripToStringKeys(), bool_0, byte_0);
+		return this.OpSetRoomProperties(hashtable_0.StripToStringKeys(), bool_0, byte_0);
 	}
 
 	// Token: 0x06004CD2 RID: 19666 RVA: 0x00142E44 File Offset: 0x00141044
-	public virtual bool vmethod_6(Hashtable hashtable_0, bool bool_0, byte byte_0)
+	public virtual bool OpSetRoomProperties(Hashtable hashtable_0, bool bool_0, byte byte_0)
 	{
 		if (base.DebugOut >= DebugLevel.INFO)
 		{
@@ -199,7 +199,7 @@ internal class LoadbalancingPeer : PhotonPeer
 	}
 
 	// Token: 0x06004CD3 RID: 19667 RVA: 0x00142EA0 File Offset: 0x001410A0
-	public virtual bool vmethod_7(string string_0, string string_1, string string_2, string string_3)
+	public virtual bool OpAuthenticate(string string_0, string string_1, string string_2, string string_3)
 	{
 		if (base.DebugOut >= DebugLevel.INFO)
 		{
@@ -215,7 +215,7 @@ internal class LoadbalancingPeer : PhotonPeer
 	}
 
 	// Token: 0x06004CD4 RID: 19668 RVA: 0x00142F1C File Offset: 0x0014111C
-	public virtual bool vmethod_8(byte[] byte_0, byte[] byte_1)
+	public virtual bool OpChangeGroups(byte[] byte_0, byte[] byte_1)
 	{
 		if (base.DebugOut >= DebugLevel.ALL)
 		{
@@ -234,7 +234,7 @@ internal class LoadbalancingPeer : PhotonPeer
 	}
 
 	// Token: 0x06004CD5 RID: 19669 RVA: 0x00142F78 File Offset: 0x00141178
-	public virtual bool vmethod_9(byte byte_0, byte byte_1, Hashtable hashtable_0, bool bool_0, byte byte_2)
+	public virtual bool RaiseEventForGroup(byte byte_0, byte byte_1, Hashtable hashtable_0, bool bool_0, byte byte_2)
 	{
 		Dictionary<byte, object> dictionary = new Dictionary<byte, object>();
 		dictionary[245] = hashtable_0;
@@ -249,17 +249,17 @@ internal class LoadbalancingPeer : PhotonPeer
 	// Token: 0x06004CD6 RID: 19670 RVA: 0x00031F3E File Offset: 0x0003013E
 	public virtual bool vmethod_10(byte byte_0, Hashtable hashtable_0, bool bool_0, byte byte_1)
 	{
-		return this.vmethod_13(byte_0, hashtable_0, bool_0, byte_1, EventCaching.DoNotCache, ReceiverGroup.Others);
+		return this.RaiseEvent(byte_0, hashtable_0, bool_0, byte_1, EventCaching.DoNotCache, ReceiverGroup.Others);
 	}
 
 	// Token: 0x06004CD7 RID: 19671 RVA: 0x00031F4D File Offset: 0x0003014D
-	public virtual bool vmethod_11(byte byte_0, Hashtable hashtable_0, bool bool_0, byte byte_1, int[] int_0)
+	public virtual bool RaiseEventToActors(byte byte_0, Hashtable hashtable_0, bool bool_0, byte byte_1, int[] int_0)
 	{
-		return this.vmethod_12(byte_0, hashtable_0, bool_0, byte_1, int_0, EventCaching.DoNotCache);
+		return this.RaiseEventToActorsCached(byte_0, hashtable_0, bool_0, byte_1, int_0, EventCaching.DoNotCache);
 	}
 
 	// Token: 0x06004CD8 RID: 19672 RVA: 0x00142FCC File Offset: 0x001411CC
-	public virtual bool vmethod_12(byte byte_0, Hashtable hashtable_0, bool bool_0, byte byte_1, int[] int_0, EventCaching eventCaching_0)
+	public virtual bool RaiseEventToActorsCached(byte byte_0, Hashtable hashtable_0, bool bool_0, byte byte_1, int[] int_0, EventCaching eventCaching_0)
 	{
 		if (base.DebugOut >= DebugLevel.INFO)
 		{
@@ -280,7 +280,7 @@ internal class LoadbalancingPeer : PhotonPeer
 	}
 
 	// Token: 0x06004CD9 RID: 19673 RVA: 0x0014304C File Offset: 0x0014124C
-	public virtual bool vmethod_13(byte byte_0, Hashtable hashtable_0, bool bool_0, byte byte_1, EventCaching eventCaching_0, ReceiverGroup receiverGroup_0)
+	public virtual bool RaiseEvent(byte byte_0, Hashtable hashtable_0, bool bool_0, byte byte_1, EventCaching eventCaching_0, ReceiverGroup receiverGroup_0)
 	{
 		if (base.DebugOut >= DebugLevel.INFO)
 		{

@@ -11,7 +11,7 @@ internal class GameInvitationService : OnAccessSingleton<IGameInvitationService,
 	{
 		this.mGameInvitationCallbacks = new List<GameInvitationCallback>();
 		OnAccessSingleton<IMessagingService, MessagingService, MessagingServiceOffline>.Prop_0.imethod_5("game_invitation", new OnRecieveMessage(this.OnGameInvitationReceived));
-		PhotonNetwork.networkingPeer.method_79(137, new OperationResponseCallback(this.OnAcceptGameInvitationResponse));
+		PhotonNetwork.networkingPeer.RegisterOperationResponseCallback(137, new OperationResponseCallback(this.OnAcceptGameInvitationResponse));
 	}
 
 	// Token: 0x0600163D RID: 5693 RVA: 0x0001056B File Offset: 0x0000E76B
@@ -47,7 +47,7 @@ internal class GameInvitationService : OnAccessSingleton<IGameInvitationService,
 	// Token: 0x06001641 RID: 5697 RVA: 0x000105A4 File Offset: 0x0000E7A4
 	public void imethod_3(GameInvitation gameInvitation_0)
 	{
-		PhotonNetwork.networkingPeer.method_81(137, new object[] { gameInvitation_0.mId });
+		PhotonNetwork.networkingPeer.OpCustomWithArgs(137, new object[] { gameInvitation_0.mId });
 	}
 
 	// Token: 0x06001642 RID: 5698 RVA: 0x0007B940 File Offset: 0x00079B40
