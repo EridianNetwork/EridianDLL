@@ -176,11 +176,19 @@ public class uniPvPFlowView : PvPFlowView
 			this.mc_InstanceBtn5.method_0(this.mc_InstancePanel.getChildByName<MovieClip>("mc_instance5"));
 			this.mc_InstanceBtn5.addEventListener(MouseEvent.CLICK, new EventDispatcher.EventCallback(this.method_30));
 			this.mc_InstancePanel.getChildByName<MovieClip>("mc_instance5").getChildByName<MovieClip>("mc_PvP_Instance").gotoAndStop("PVP_valleytown");
+			
 			this.mc_InstanceBtn6 = new GClass25();
 			this.mc_InstanceBtn6.method_0(this.mc_InstancePanel.getChildByName<MovieClip>("mc_instance6"));
 			this.mc_InstanceBtn6.addEventListener(MouseEvent.CLICK, new EventDispatcher.EventCallback(this.method_31));
-			this.mc_InstanceBtn6.Boolean_6 = false;
-			this.mc_InstancePanel.getChildByName<MovieClip>("mc_instance6").getChildByName<MovieClip>("mc_PvP_Instance").gotoAndStop("none");
+			this.mc_InstanceBtn6.Boolean_6 = true;
+			this.mc_InstancePanel.getChildByName<MovieClip>("mc_instance6").getChildByName<MovieClip>("mc_PvP_Instance").gotoAndStop("PVP_shipment");
+
+			// this.mc_InstanceBtn7 = new GClass25();
+			// this.mc_InstanceBtn7.method_0(this.mc_InstancePanel.getChildByName<MovieClip>("mc_instance7"));
+			// this.mc_InstanceBtn7.addEventListener(MouseEvent.CLICK, new EventDispatcher.EventCallback(this.method_32));
+			// this.mc_InstanceBtn7.Boolean_6 = true;
+			// this.mc_InstancePanel.getChildByName<MovieClip>("mc_instance7").getChildByName<MovieClip>("mc_PvP_Instance").gotoAndStop("PVP_CTest");
+
 			this.mc_ListPanel = this.mc_root.getChildByName<MovieClip>("mc_subPanel").getChildByName<MovieClip>("mc_List");
 			this.mc_BackBtn = new GClass25();
 			this.mc_BackBtn.method_0(this.mc_ListPanel.getChildByName<MovieClip>("mc_back"));
@@ -761,6 +769,14 @@ public class uniPvPFlowView : PvPFlowView
 		// Token: 0x06003BDF RID: 15327 RVA: 0x0000311B File Offset: 0x0000131B
 		private void method_31(CEvent cevent_0)
 		{
+			this.mc_Selected.getChildByName<MovieClip>("mc_selected").gotoAndStop("PVP_shipment");
+			this.method_22(7002);
+		}
+
+		private void method_32(CEvent cevent_0)
+		{
+			this.mc_Selected.getChildByName<MovieClip>("mc_selected").gotoAndStop("PVP_CTest");
+			this.method_22(900000);
 		}
 
 		// Token: 0x040029DC RID: 10716
@@ -867,6 +883,8 @@ public class uniPvPFlowView : PvPFlowView
 
 		// Token: 0x040029FE RID: 10750
 		protected GClass25 mc_InstanceBtn6;
+
+		protected GClass25 mc_InstanceBtn7;
 
 		// Token: 0x040029FF RID: 10751
 		protected MovieClip mc_ListPanel;
