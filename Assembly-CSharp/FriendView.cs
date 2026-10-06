@@ -39,6 +39,10 @@ public class FriendView : BaseView
 	protected override void vmethod_1(bool bool_0, bool bool_1 = false)
 	{
 		base.vmethod_1(bool_0, bool_1);
+		if (bool_0)
+		{
+			FriendManager.smethod_0().method_12(); // getting friendlist on each view open
+		}
 		FriendManager.smethod_0().method_25();
 	}
 
