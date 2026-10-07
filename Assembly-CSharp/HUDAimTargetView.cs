@@ -177,24 +177,36 @@ public class HUDAimTargetView : BaseView
 			IL_0124:
 			this.m_previousIconeMode = bool_0;
 		}
-		Camera camera_ = MonoSingleton<AppManager>.Instance.method_0().Camera_0;
-		if (camera_ != null)
+		this.method_5();
+	}
+
+	// Token: 0x06002CD3 RID: 11475 RVA: 0x000D31C0 File Offset: 0x000D13C0
+	public void method_5()
+	{
+		if (!this._bEntityDisplaying || this._interactingItem == null)
 		{
-			Vector3 vector3 = vector2;
-			vector3.y += 0.4f;
-			float num = Vector3.Distance(vector2, camera_.transform.position);
-			Ray ray = new Ray(camera_.transform.position, camera_.transform.forward);
-			RaycastHit raycastHit;
-			if (this._pillorTF != null && this._pillorTF.collider.Raycast(ray, out raycastHit, 10f))
-			{
-				vector3.y = Mathf.Min(vector.y - 0.2f, Mathf.Max(raycastHit.point.y, vector3.y));
-				num = raycastHit.distance;
-			}
-			num = 1.5f / num;
-			Vector2 vector4 = camera_.WorldToScreenPoint(vector3);
-			vector4.y = (float)Screen.height - vector4.y + 40f;
-			this.vmethod_20(vector4, num);
+			return;
 		}
+		Camera camera_ = MonoSingleton<AppManager>.Instance.method_0().Camera_0;
+		if (camera_ == null)
+		{
+			return;
+		}
+		Vector3 vector = this.method_3(this._interactingItem);
+		Vector3 vector2 = this.method_4(this._interactingItem);
+		vector2.y += 0.4f;
+		float num = Vector3.Distance(this.method_4(this._interactingItem), camera_.transform.position);
+		Ray ray = new Ray(camera_.transform.position, camera_.transform.forward);
+		RaycastHit raycastHit;
+		if (this._pillorTF != null && this._pillorTF.collider.Raycast(ray, out raycastHit, 10f))
+		{
+			vector2.y = Mathf.Min(vector.y - 0.2f, Mathf.Max(raycastHit.point.y, vector2.y));
+			num = raycastHit.distance;
+		}
+		num = 1.5f / num;
+		Vector2 vector3 = camera_.WorldToScreenPoint(vector2);
+		vector3.y = (float)Screen.height - vector3.y + 40f;
+		this.vmethod_20(vector3, num);
 	}
 
 	// Token: 0x06002CD4 RID: 11476 RVA: 0x000D3400 File Offset: 0x000D1600

@@ -118,6 +118,14 @@ public class PlayerController : MonoBehaviour
 			quaternion = Quaternion.Euler(num, num2, num3);
 		}
 		this.m_pitchNode.rotation = quaternion;
+		if (this.m_entity.vmethod_25().IsMyActor() && MonoSingleton<AppManager>.Instance != null && MonoSingleton<AppManager>.Instance.method_0() != null)
+		{
+			HUDAimTargetView hudAimTargetView = MonoSingleton<AppManager>.Instance.method_0().vmethod_5<HUDAimTargetView>();
+			if (hudAimTargetView != null)
+			{
+				hudAimTargetView.method_5();
+			}
+		}
 	}
 
 	// Token: 0x0600204E RID: 8270 RVA: 0x0009E47C File Offset: 0x0009C67C

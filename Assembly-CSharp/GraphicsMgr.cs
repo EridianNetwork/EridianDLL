@@ -38,7 +38,7 @@ public class GraphicsMgr : MonoSingleton<GraphicsMgr>
 			this.mWantSupportResInfoArray[1].width = 1920;
 			this.mWantSupportResInfoArray[1].height = 1080;
 			this.mSupportResInfoArray = new List<Resolution>(Screen.resolutions);
-			this.mSupportFrameRates = new List<int> { 30, 60, 100, -1 };
+			this.mSupportFrameRates = new List<int> { 30, 60, 90, 120, 144, 240, -1 };
 			this.mLastResolution.width = -1;
 			this.mLastResolution.height = -1;
 		}
@@ -600,12 +600,12 @@ public class GraphicsMgr : MonoSingleton<GraphicsMgr>
 	{
 		yield return new WaitForSeconds(float_0);
 		method_32(!bool_0);
-		SetWindowPos(intptr_0, 0, int_0, int_1, int_2, int_3, 64);
+		SetWindowPos(intptr_0, -2, int_0, int_1, int_2, int_3, 64);
 		if (bool_0)
 		{
 			method_32(!bool_0);
 			method_32(!bool_0);
-			SetWindowPos(intptr_0, -1, int_0, int_1, int_2, int_3, 3);
+			SetWindowPos(intptr_0, -2, int_0, int_1, int_2, int_3, 3);
 		}
 	}
 	// Token: 0x060024ED RID: 9453 RVA: 0x000B100C File Offset: 0x000AF20C
@@ -614,7 +614,7 @@ public class GraphicsMgr : MonoSingleton<GraphicsMgr>
 		IntPtr intPtr = MonoSingleton<AppManager>.Instance.method_19();
 		if (!bool_0)
 		{
-			GraphicsMgr.SetWindowLong(intPtr, -20, 8L);
+			GraphicsMgr.SetWindowLong(intPtr, -20, 0L);
 			GraphicsMgr.SetWindowLong(intPtr, -16, 369164288L);
 			GraphicsMgr.SetLayeredWindowAttributes(intPtr, 0, 0, 1);
 		}
