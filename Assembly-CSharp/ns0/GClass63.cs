@@ -91,10 +91,10 @@ namespace ns0
 			{
 				GClass20.GClass20_0.method_6(displayObject_0, "tips");
 			}
-			if (this.hudmaskPanel_0 != null)
-			{
-				this.hudmaskPanel_0.method_6(false);
-			}
+			//if (this.hudmaskPanel_0 != null)
+			//{
+			//	this.hudmaskPanel_0.method_6(false);
+			//}
 		}
 
 		// Token: 0x06003581 RID: 13697 RVA: 0x000F46D8 File Offset: 0x000F28D8
