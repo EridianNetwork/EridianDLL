@@ -212,6 +212,9 @@ public class TownBehaviour : StepBehaviour
 				case NpcOccupation.WeaponShop:
 					num = townNpc.m_WeaponShopID;
 					break;
+				case NpcOccupation.OutfitShop: // without this, npcs in town will have empty pages for outfits
+					num = townNpc.m_OutfitShopID;
+					break;
 				}
 				hashSet.Add(num);
 			}
