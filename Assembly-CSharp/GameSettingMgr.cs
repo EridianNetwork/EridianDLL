@@ -32,7 +32,8 @@ public class GameSettingMgr : MonoSingleton<GameSettingMgr>
 						GameSettingMgr.SettingItemData settingItemData = new GameSettingMgr.SettingItemData();
 						settingItemData.config = settingItem;
 						settingItemData.curValue.fValue = settingItem.mDefaultFloat;
-						settingItemData.curValue.iIndex = settingItem.mDefaultInt;
+						settingItemData.curValue.iIndex = ((settingItem.mFunctionType == SettingFunctionType.Language) ? 1 : settingItem.mDefaultInt);
+						settingItemData.newValue.iIndex = settingItemData.curValue.iIndex;
 						settingItemData.curValue.bOn = settingItem.mDefaultBool;
 						list.Add(settingItemData);
 						this._dicSettingsByFunctionType.Add(settingItem.mFunctionType, settingItemData);
@@ -563,6 +564,10 @@ public class GameSettingMgr : MonoSingleton<GameSettingMgr>
 				if (jsonobject != null)
 				{
 					int num = (int)jsonobject.n;
+					if (settingItemData_0.config != null && settingItemData_0.config.mFunctionType == SettingFunctionType.Language)
+					{
+						num = 1;
+					}
 					settingItemData_0.curValue.iIndex = num;
 					settingItemData_0.newValue.iIndex = num;
 				}
@@ -814,9 +819,12 @@ public class GameSettingMgr : MonoSingleton<GameSettingMgr>
 					DiscordRpcHandler.Shutdown();
 					return;
 				case SettingFunctionType.Language:
-					if (this.config.mControlSchemeList != null && settingItemValueContainer_0.iIndex >= 0 && settingItemValueContainer_0.iIndex < this.config.mControlSchemeList.Length)
+					if (this.config.mControlSchemeList != null && this.config.mControlSchemeList.Length > 1)
 					{
-						LocalizeSystem.smethod_0().method_0(this.config.mControlSchemeList[settingItemValueContainer_0.iIndex]);
+						settingItemValueContainer_0.iIndex = 1;
+						this.curValue.iIndex = 1;
+						this.newValue.iIndex = 1;
+						LocalizeSystem.smethod_0().method_0(this.config.mControlSchemeList[1]);
 						MonoSingleton<global::EchoMessageManager>.Instance.RefreshLocalization();
 						return;
 					}
@@ -854,7 +862,7 @@ public class GameSettingMgr : MonoSingleton<GameSettingMgr>
 				else
 				{
 					this.newValue.fValue = (this.curValue.fValue = this.config.mDefaultFloat);
-					this.newValue.iIndex = (this.curValue.iIndex = this.config.mDefaultInt);
+					this.newValue.iIndex = (this.curValue.iIndex = ((this.config.mFunctionType == SettingFunctionType.Language) ? 1 : this.config.mDefaultInt));
 					this.newValue.bOn = (this.curValue.bOn = this.config.mDefaultBool);
 					this.method_1(this.curValue);
 				}

@@ -83,7 +83,7 @@ namespace BHV
 				this.secondWindView_0.Boolean_1 = true;
 				this.cameraEffectMgr_0.method_6(true);
 				this.cameraEffectMgr_0.method_7(0.4f);
-				this.entityPlayer_0.method_59(true);
+				//this.entityPlayer_0.method_59(true);
 			}
 			DebugUtils.Log(LogCategory.AI, "BHVtaskPlayerDown InitTask() finished: true");
 			return true;

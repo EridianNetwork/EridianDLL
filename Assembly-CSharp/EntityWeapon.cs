@@ -50,6 +50,7 @@ public class EntityWeapon : EntityObject
 	}
 
 	// Token: 0x06001D6B RID: 7531 RVA: 0x00090F88 File Offset: 0x0008F188
+	// seems to get the skel of the player, and attatches the weapon to the correct bone, so basically equip weapon. im making an edit here to make sure the rigidbody is disabled
 	public override void vmethod_63(Entity entity_0)
 	{
 		if (entity_0 == null)
@@ -95,6 +96,13 @@ public class EntityWeapon : EntityObject
 		DebugUtils.Log(LogCategory.Gamelogic, "game object active state is " + base.gameObject.activeInHierarchy);
 		this.method_55();
 		this.mWpnRenderer = base.gameObject.GetComponentInChildren<SkinnedMeshRenderer>();
+		// use the same method as above to find the wpn's rigidbody and disable it, this is to prevent the wpn from colliding with the player when holstered
+		Rigidbody wpnRigidbody = base.gameObject.GetComponentInChildren<Rigidbody>();
+		if (wpnRigidbody != null)
+		{
+			wpnRigidbody.isKinematic = true;
+			wpnRigidbody.detectCollisions = false;
+		}
 		if (MonoSingleton<Session>.Instance.method_16() && NPC_UIFlowController.smethod_0() != null && NPC_UIFlowController.smethod_0().Boolean_0 && this.mWpnRenderer)
 		{
 			this.mWpnRenderer.enabled = false;
@@ -876,6 +884,7 @@ public class EntityWeapon : EntityObject
 	}
 
 	// Token: 0x06001D91 RID: 7569 RVA: 0x00092900 File Offset: 0x00090B00
+	// method 50 here builds the gun, but im unsure exactly when, seemingly just when a gun is built in general.
 	private IEnumerator method_50()
 	{
 		yield return StartCoroutine(ns0.MonoSingleton<WeaponFactory>.Instance.method_4(m_dna, base.gameObject));
@@ -889,6 +898,7 @@ public class EntityWeapon : EntityObject
 			boxColl.size = new Vector3(0.1f, 0.1f, 0.1f);
 			boxColl.center = new Vector3(0f, 0f, 0.3f);
 			SkinnedMeshRenderer render = base.gameObject.GetComponentInChildren<SkinnedMeshRenderer>();
+			// above we find the skinned renderer which is a child of the gun, so maybe this can assist in a lter fix with the invis gun stuff. as of now it only fixes on swap
 			if (render != null)
 			{
 				boxColl.size = new Vector3(Mathf.Max(0.1f, render.localBounds.extents.x * 2f), Mathf.Max(0.1f, render.localBounds.extents.y * 2f), Mathf.Max(0.1f, render.localBounds.extents.z * 2f));
@@ -904,6 +914,7 @@ public class EntityWeapon : EntityObject
 		DebugUtils.Log(LogCategory.Gamelogic, "InstanciateModel weapon is ready, weapon " + m_dna);
 	}
 	// Token: 0x06001D92 RID: 7570 RVA: 0x0009291C File Offset: 0x00090B1C
+	// this method appears to be the holstering featrue, hence why it disables the collider and rigidbody of the weap
 	public void method_51(Entity entity_0)
 	{
 		if (entity_0 == null)
@@ -1979,10 +1990,17 @@ public class EntityWeapon : EntityObject
 	}
 
 	// Token: 0x06001DBF RID: 7615 RVA: 0x00014F1C File Offset: 0x0001311C
+	// this controls your aads SPEED. IN FUTURE WE need a slider but for now im gonna make it a fraction of the base sens
 	public void method_85(ref float float_0, ref float float_1)
 	{
-		float_0 = FloatAttributeValue.smethod_0(this.m_attribute.method_1(AttributeType.ZoomCameraAngularSpeedYaw) as FloatAttributeValue);
-		float_1 = FloatAttributeValue.smethod_0(this.m_attribute.method_1(AttributeType.ZoomCameraAngularSpeedPitch) as FloatAttributeValue);
+		// old code, used weapon parts to define it which is fucking insane because weapon parts are mega broken right now as idi pointed out. in the future uncomment below and remove the new code. this is just until we fix parts
+		//float_0 = FloatAttributeValue.smethod_0(this.m_attribute.method_1(AttributeType.ZoomCameraAngularSpeedYaw) as FloatAttributeValue);
+		//float_1 = FloatAttributeValue.smethod_0(this.m_attribute.method_1(AttributeType.ZoomCameraAngularSpeedPitch) as FloatAttributeValue);
+
+		// new code will just use % of our base sens for now.
+		float sens = (base.m_owner as EntityPlayer).GetComponent<PlayerBehavior>().method_39();
+		float_0 = sens * 0.15f;
+		float_1 = sens * 0.15f;
 	}
 
 	// Token: 0x06001DC0 RID: 7616 RVA: 0x00094764 File Offset: 0x00092964
