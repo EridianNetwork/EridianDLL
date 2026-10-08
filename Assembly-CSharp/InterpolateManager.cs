@@ -56,15 +56,8 @@ public class InterpolateManager
 			Vector3 vector = (timePos.m_position - timePos2.m_position) / num;
 			this.m_straightAcceleration = (vector.magnitude - this.m_velocity.magnitude) / 2f * num;
 			this.m_velocity = vector;
-			float num2 = timePos.m_rotation.eulerAngles.y - timePos2.m_rotation.eulerAngles.y;
-			if (num2 > 180f)
-			{
-				num2 = 360f - num2;
-			}
-			if (num2 < -180f)
-			{
-				num2 = -360f + num2;
-			}
+			// editing how rotation is calculated to avoid sharp zig-zag movement. might not be te best way to do this as compared to how it was because of golang server shit. I have no idea
+			float num2 = Mathf.DeltaAngle(timePos2.m_rotation.eulerAngles.y, timePos.m_rotation.eulerAngles.y);
 			num2 /= num;
 			this.m_angleAcceleration = (num2 - this.m_angleVelocity) / 2f * num;
 			this.m_angleVelocity = num2;
