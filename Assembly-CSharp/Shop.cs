@@ -20,6 +20,19 @@ public class Shop
 		}
 	}
 
+	public Shop(int id, int refreshTime, double sellRatio)
+	{
+		this.Id = id;
+		this.RefreshTime = refreshTime;
+		this.SellRatio = sellRatio;
+		this.LastGenerated = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
+	}
+
+	public void SetInventory(Dictionary<int, ShopItem> items)
+	{
+		this.mInventory = items ?? new Dictionary<int, ShopItem>();
+	}
+
 	// Token: 0x17000148 RID: 328
 	// (get) Token: 0x060018D2 RID: 6354 RVA: 0x00012967 File Offset: 0x00010B67
 	// (set) Token: 0x060018D3 RID: 6355 RVA: 0x0001296F File Offset: 0x00010B6F

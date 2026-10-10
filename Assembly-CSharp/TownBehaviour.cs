@@ -215,6 +215,9 @@ public class TownBehaviour : StepBehaviour
 				case NpcOccupation.OutfitShop: // without this, npcs in town will have empty pages for outfits
 					num = townNpc.m_OutfitShopID;
 					break;
+				case NpcOccupation.MaterialShop: // for the jingle material shop
+					num = townNpc.m_MaterialShopID;
+					break;
 				}
 				hashSet.Add(num);
 			}

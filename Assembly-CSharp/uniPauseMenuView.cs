@@ -1263,6 +1263,18 @@ public class uniPauseMenuView : PauseMenuView
 						}
 						break;
 					}
+					case SettingFunctionType.AimSensitivity:
+					{
+						FrameRate[] mFrameRates = settingItemData_0.config.mFrameRates;
+						for (int i = 0; i < mFrameRates.Length; i++)
+						{
+							FrameRate frameRate = mFrameRates[i];
+							StringBuilder stringBuilder = new StringBuilder("Setting_");
+							stringBuilder.Append(frameRate.ToString());
+							_strValueList.Add(LocalizedString.smethod_0(new LocalizedString(stringBuilder.ToString())));
+						}
+						break;
+					}
 					}
 				}
 				if (settingItemData_0 != null && settingItemData_0.config != null)

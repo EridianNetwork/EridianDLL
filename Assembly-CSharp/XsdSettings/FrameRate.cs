@@ -7,10 +7,11 @@ namespace XsdSettings
 	{
 		// Token: 0x0400335B RID: 13147
 		Fps30,
-		// Token: 0x0400335C RID: 13148
 		Fps60,
-		// Token: 0x0400335D RID: 13149
-		Fps100,
+		Fps90,
+		Fps120,
+		Fps144,
+		Fps240,
 		// Token: 0x0400335E RID: 13150
 		Unlimited
 	}

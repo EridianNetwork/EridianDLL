@@ -26,6 +26,7 @@ namespace XsdSettings
 		// Token: 0x0400353E RID: 13630
 		PvP,
 		// Token: 0x0400353F RID: 13631
-		OutfitShop
+		OutfitShop,
+		MaterialShop
 	}
 }

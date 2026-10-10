@@ -23,6 +23,8 @@ namespace XsdSettings
 		InvertMouse,
 		// Token: 0x04003345 RID: 13125
 		MouseSensitivity,
+
+		AimSensitivity,
 		// Token: 0x04003346 RID: 13126
 		CustomKeyBinding,
 		// Token: 0x04003347 RID: 13127

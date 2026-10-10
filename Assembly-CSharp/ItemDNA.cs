@@ -134,7 +134,7 @@ public class ItemDNA
 			case ItemType.Shield:
 				return this.m_shiled.m_rarity;
 			case ItemType.Material:
-				return ItemRarity.Common;
+				return MaterialRarityOverride.RarityFor(this.m_materialType);
 			case ItemType.ClassMode:
 				return this.m_classMode.m_rarity;
 			case ItemType.Outfit:
@@ -301,7 +301,7 @@ public class ItemDNA
 		}
 		if (this.m_type == ItemType.Material)
 		{
-			return this.m_materialType == MaterialType.MT_Purple_Crystal;
+			return this.ItemRarity_0 == ItemRarity.VeryRare || this.ItemRarity_0 == ItemRarity.Epic || this.ItemRarity_0 == ItemRarity.MetaEpic;
 		}
 		return flag;
 	}

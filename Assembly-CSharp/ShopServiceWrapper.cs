@@ -96,7 +96,16 @@ public class ShopServiceWrapper : ServiceWrapper<IServiceWrapper, ShopServiceWra
 		global::Shop shop = null;
 		if (!this.m_shops.TryGetValue(int_0, out shop) || bool_1)
 		{
-			OnAccessSingleton<IShopService, ShopService, ShopServiceOffline>.Prop_0.imethod_0(new OnGetShop(this.OnGetShop), int_0);
+			int shopId = int_0;
+			OnAccessSingleton<IShopService, ShopService, ShopServiceOffline>.Prop_0.imethod_0(delegate(global::Shop result)
+			{
+				if (result != null && result.Id != shopId)
+				{
+					this.OnGetShop(result);
+					return;
+				}
+				this.OnGetShop(ShopStockOverride.Apply(shopId, result, this.m_setup, this.m_economicSettings));
+			}, int_0);
 		}
 		return shop;
 	}
