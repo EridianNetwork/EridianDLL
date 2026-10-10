@@ -95,6 +95,7 @@ public class EntityWeapon : EntityObject
 		base.gameObject.SetActive(true);
 		DebugUtils.Log(LogCategory.Gamelogic, "game object active state is " + base.gameObject.activeInHierarchy);
 		this.method_55();
+		this.method_53(entity_0);
 		this.mWpnRenderer = base.gameObject.GetComponentInChildren<SkinnedMeshRenderer>();
 		// use the same method as above to find the wpn's rigidbody and disable it, this is to prevent the wpn from colliding with the player when holstered
 		Rigidbody wpnRigidbody = base.gameObject.GetComponentInChildren<Rigidbody>();
@@ -960,16 +961,28 @@ public class EntityWeapon : EntityObject
 	// Token: 0x06001D94 RID: 7572 RVA: 0x00092A0C File Offset: 0x00090C0C
 	private void method_53(Entity entity_0)
 	{
+		if (this.m_magazineInitialized)
+		{
+			return;
+		}
 		if (entity_0.vmethod_8() == Entity.EntityType.Player && entity_0 as EntityPlayer != null && entity_0.vmethod_19() as EquipmentInventoryEntityPlayer != null)
 		{
+			if (!entity_0.vmethod_26())
+			{
+				return;
+			}
 			EquipmentInventoryEntityPlayer equipmentInventoryEntityPlayer = entity_0.vmethod_19() as EquipmentInventoryEntityPlayer;
-			this.m_ammoCount = Mathf.Min(equipmentInventoryEntityPlayer.vmethod_15(this.method_99()), (entity_0 as EntityPlayer).method_57(IntAttributeValue.smethod_0(this.m_attribute.method_1(AttributeType.ClipSize) as IntAttributeValue)));
-			equipmentInventoryEntityPlayer.vmethod_16(equipmentInventoryEntityPlayer.vmethod_15(this.method_99()) - (entity_0 as EntityPlayer).method_57(IntAttributeValue.smethod_0(this.m_attribute.method_1(AttributeType.ClipSize) as IntAttributeValue)), this.method_99());
+			int reserve = equipmentInventoryEntityPlayer.vmethod_15(this.method_99());
+			int clip = (entity_0 as EntityPlayer).method_57(IntAttributeValue.smethod_0(this.m_attribute.method_1(AttributeType.ClipSize) as IntAttributeValue));
+			int loaded = Mathf.Min(reserve, clip);
+			this.m_ammoCount = loaded;
+			equipmentInventoryEntityPlayer.vmethod_16(reserve - loaded, this.method_99());
 		}
 		else
 		{
 			this.m_ammoCount = this.method_101();
 		}
+		this.m_magazineInitialized = true;
 		this.m_isDataDirty = true;
 	}
 
@@ -982,6 +995,7 @@ public class EntityWeapon : EntityObject
 		}
 		DebugUtils.Log(LogCategory.Gamelogic, "character not null");
 		base.method_15(entity_0);
+		this.method_53(entity_0);
 		if (entity_0.vmethod_8() != Entity.EntityType.Player)
 		{
 			AnimationManagerFSM component = entity_0.GetComponent<AnimationManagerFSM>();
@@ -2319,6 +2333,8 @@ public class EntityWeapon : EntityObject
 
 	// Token: 0x0400134F RID: 4943
 	public int m_ammoCount;
+
+	private bool m_magazineInitialized;
 
 	// Token: 0x04001350 RID: 4944
 	[HideInInspector]
