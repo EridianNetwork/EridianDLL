@@ -10,8 +10,8 @@ public struct InputFrame
 	public InputFrame(InputFrame inputFrame_0)
 	{
 		this.m_flags = inputFrame_0.m_flags;
-		this.m_yaw = inputFrame_0.m_yaw;
-		this.m_pitch = inputFrame_0.m_pitch;
+		this.m_yaw16 = inputFrame_0.m_yaw16;
+		this.m_pitch16 = inputFrame_0.m_pitch16;
 		this.m_frameNum = inputFrame_0.m_frameNum;
 	}
 

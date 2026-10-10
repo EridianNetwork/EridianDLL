@@ -376,8 +376,7 @@ public class VPaintObject : MonoBehaviour, IVPaintIdentifier
 		{
 			Vector3 v = base.transform.TransformPoint(vertices[i]);
 			float distance = Vector3.Distance(v, vector3_0);
-			ref Color reference = ref target[i];
-			reference = vpaintObjectPositionalModifier_0(colors[i], distance);
+			target[i] = vpaintObjectPositionalModifier_0(colors[i], distance);
 		}
 		IEnumerator routine = VPaintUtility.LerpColors(this, colors, target, float_0);
 		while (routine.MoveNext())

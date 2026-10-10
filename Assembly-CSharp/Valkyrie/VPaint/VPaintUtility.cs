@@ -172,8 +172,7 @@ namespace Valkyrie.VPaint
 					float count = countTotal[v];
 					float lerp2 = ((count != 0f) ? (1f - distTotal[v] / radius) : 0f);
 					lerp2 *= intensity;
-					ref Color reference = ref paintData.colors[v];
-					reference = Color.Lerp(paintData.colors[v], col, lerp2);
+					paintData.colors[v] = Color.Lerp(paintData.colors[v], col, lerp2);
 					paintData.transparency[v] = Mathf.Lerp(paintData.transparency[v], tr, lerp2);
 				}
 			}
@@ -285,8 +284,7 @@ namespace Valkyrie.VPaint
 					if (fac != 0f)
 					{
 						float lerp = intensity * (fac / count);
-						ref Color reference = ref colors[v];
-						reference = Color.Lerp(colors[v], col, lerp);
+						colors[v] = Color.Lerp(colors[v], col, lerp);
 						trans[v] = Mathf.Lerp(trans[v], tran, lerp);
 					}
 				}
@@ -304,8 +302,7 @@ namespace Valkyrie.VPaint
 			float f = t / time;
 			for (int i = 0; i < len; i++)
 			{
-				ref Color reference = ref lerp[i];
-				reference = Color.Lerp(start[i], end[i], f);
+				lerp[i] = Color.Lerp(start[i], end[i], f);
 			}
 			obj.method_3(lerp);
 			yield return null;

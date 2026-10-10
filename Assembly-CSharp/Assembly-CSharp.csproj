@@ -35,28 +35,28 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\..\..\Borderlands Online Revived\Game Files (Do Not Touch)\BOL_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>..\libs\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-UnityScript-firstpass">
-      <HintPath>..\..\..\..\Borderlands Online Revived\Game Files (Do Not Touch)\BOL_Data\Managed\Assembly-UnityScript-firstpass.dll</HintPath>
+      <HintPath>..\libs\Managed\Assembly-UnityScript-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="LibUniSWF">
-      <HintPath>..\..\..\..\Borderlands Online Revived\Game Files (Do Not Touch)\BOL_Data\Managed\LibUniSWF.dll</HintPath>
+      <HintPath>..\libs\Managed\LibUniSWF.dll</HintPath>
     </Reference>
     <Reference Include="Photon3Unity3D">
-      <HintPath>..\..\..\..\Borderlands Online Revived\Game Files (Do Not Touch)\BOL_Data\Managed\Photon3Unity3D.dll</HintPath>
+      <HintPath>..\libs\Managed\Photon3Unity3D.dll</HintPath>
     </Reference>
     <Reference Include="System">
-      <HintPath>E:\games\blandsonline\borderlands-online\game_3\BOL_Data\Managed\System.dll</HintPath>
+      <HintPath>libs\\Managed\System.dll</HintPath>
     </Reference>
     <Reference Include="System.Core">
-      <HintPath>E:\games\blandsonline\borderlands-online\game_3\BOL_Data\Managed\System.Core.dll</HintPath>
+      <HintPath>libs\\Managed\System.Core.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml">
-      <HintPath>E:\games\blandsonline\borderlands-online\game_3\BOL_Data\Managed\System.Xml.dll</HintPath>
+      <HintPath>libs\\Managed\System.Xml.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\Borderlands Online Revived\Game Files (Do Not Touch)\BOL_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\libs\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -1760,7 +1760,6 @@
     <Compile Include="ShopService.cs" />
     <Compile Include="ShopServiceOffline.cs" />
     <Compile Include="ShopServiceWrapper.cs" />
-    <Compile Include="ShopStockOverride.cs" />
     <Compile Include="ShopView.cs" />
     <Compile Include="SimpleFlyCamera.cs" />
     <Compile Include="SkagAnimationManagerFSM.cs" />
