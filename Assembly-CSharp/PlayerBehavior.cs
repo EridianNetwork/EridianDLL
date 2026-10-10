@@ -21,6 +21,7 @@ public class PlayerBehavior : MonoBehaviour
 		{
 			this.holdToCrouch = MonoSingleton<GameSettingMgr>.Instance.method_9(SettingFunctionType.HoldCrouching);
 			this.method_38(MonoSingleton<GameSettingMgr>.Instance.method_10(SettingFunctionType.MouseSensitivity));
+			this.SetAimSensitivity(MonoSingleton<GameSettingMgr>.Instance.method_10(SettingFunctionType.AimSensitivity));
 			this.method_46(MonoSingleton<GameSettingMgr>.Instance.method_9(SettingFunctionType.InvertMouse));
 			this.m_firstPersonSettings.m_FOVDefault = MonoSingleton<GameSettingMgr>.Instance.method_10(SettingFunctionType.FOV);
 		}
@@ -763,7 +764,7 @@ public class PlayerBehavior : MonoBehaviour
 			EntityWeapon entityWeapon = this.m_entity.vmethod_16();
 			if (entityWeapon != null)
 			{
-				entityWeapon.method_85(ref float_0, ref float_1);
+				entityWeapon.method_85(ref float_0, ref float_1, this.m_aimSensitivity);
 				return;
 			}
 		}
@@ -782,6 +783,11 @@ public class PlayerBehavior : MonoBehaviour
 	public float method_39()
 	{
 		return this.m_firstPersonSettings.m_cameraAngularSpeedYaw;
+	}
+
+	public void SetAimSensitivity(float sensitivity)
+	{
+		this.m_aimSensitivity = sensitivity;
 	}
 
 	// Token: 0x0600203F RID: 8255 RVA: 0x0001659A File Offset: 0x0001479A
@@ -922,6 +928,8 @@ public class PlayerBehavior : MonoBehaviour
 
 	// Token: 0x040014DC RID: 5340
 	private float m_angularVelocityPitch;
+
+	private float m_aimSensitivity;
 
 	// Token: 0x040014DD RID: 5341
 	private float m_recoilOffsetYaw;

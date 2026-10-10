@@ -1990,17 +1990,14 @@ public class EntityWeapon : EntityObject
 	}
 
 	// Token: 0x06001DBF RID: 7615 RVA: 0x00014F1C File Offset: 0x0001311C
-	// this controls your aads SPEED. IN FUTURE WE need a slider but for now im gonna make it a fraction of the base sens
-	public void method_85(ref float float_0, ref float float_1)
+	public void method_85(ref float float_0, ref float float_1, float aimSensitivity)
 	{
 		// old code, used weapon parts to define it which is fucking insane because weapon parts are mega broken right now as idi pointed out. in the future uncomment below and remove the new code. this is just until we fix parts
 		//float_0 = FloatAttributeValue.smethod_0(this.m_attribute.method_1(AttributeType.ZoomCameraAngularSpeedYaw) as FloatAttributeValue);
 		//float_1 = FloatAttributeValue.smethod_0(this.m_attribute.method_1(AttributeType.ZoomCameraAngularSpeedPitch) as FloatAttributeValue);
 
-		// new code will just use % of our base sens for now.
-		float sens = (base.m_owner as EntityPlayer).GetComponent<PlayerBehavior>().method_39();
-		float_0 = sens * 0.15f;
-		float_1 = sens * 0.15f;
+		float_0 = aimSensitivity;
+		float_1 = aimSensitivity;
 	}
 
 	// Token: 0x06001DC0 RID: 7616 RVA: 0x00094764 File Offset: 0x00092964

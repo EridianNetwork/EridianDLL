@@ -261,6 +261,13 @@ public class NPCInteractiveView : BaseView, IQuestServiceNotificationListerner, 
 						this._totalList.Add(functionListItemData);
 					}
 					break;
+				case NpcOccupation.MaterialShop:
+					if (num >= LevelingManager.SELLING_UNLOCK_LEVEL)
+					{
+						functionListItemData.functionType = NPC_UIFlowController.NPC_UIFlowState.MaterialShop;
+						this._totalList.Add(functionListItemData);
+					}
+					break;
 				}
 			}
 		}

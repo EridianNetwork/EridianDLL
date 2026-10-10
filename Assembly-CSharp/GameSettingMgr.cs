@@ -14,8 +14,32 @@ public class GameSettingMgr : MonoSingleton<GameSettingMgr>
 	// Token: 0x060030CB RID: 12491 RVA: 0x000DE204 File Offset: 0x000DC404
 	private void Start()
 	{
-		TextAsset textAsset = (TextAsset)ResourcesLoader.smethod_0("Settings/SettingMenu");
-		using (StringReader stringReader = new StringReader(textAsset.text))
+		string text2 = null;
+		try
+		{
+			string text3 = Path.Combine(Application.dataPath, "../overrides/SettingsMenu_override.xml");
+			if (File.Exists(text3))
+			{
+				text2 = File.ReadAllText(text3);
+				DebugUtils.Log(LogCategory.Framework, "GameSettingMgr: using external settings override " + text3);
+			}
+		}
+		catch (Exception ex)
+		{
+			DebugUtils.LogWarning(LogCategory.System, "GameSettingMgr settings override read failed: " + ex.Message);
+			text2 = null;
+		}
+		if (text2 != null)
+		{
+			DebugUtils.Log(LogCategory.Framework, "GameSettingMgr: parsing external settings override.");
+		}
+		else
+		{
+			TextAsset textAsset = (TextAsset)ResourcesLoader.smethod_0("Settings/SettingMenu");
+			text2 = textAsset.text;
+			Resources.UnloadAsset(textAsset);
+		}
+		using (StringReader stringReader = new StringReader(text2))
 		{
 			foreach (Category category in (new XmlSerializer(typeof(SettingMenuSetup)).Deserialize(stringReader) as SettingMenuSetup).Settings)
 			{
@@ -59,7 +83,6 @@ public class GameSettingMgr : MonoSingleton<GameSettingMgr>
 		string @string = PlayerPrefs.GetString("PlayerSetting");
 		this.OnGetSavedSettingsStrings(@string);
 		this.method_5();
-		Resources.UnloadAsset(textAsset);
 	}
 
 	// Token: 0x060030CC RID: 12492 RVA: 0x0001FD52 File Offset: 0x0001DF52
@@ -770,6 +793,13 @@ public class GameSettingMgr : MonoSingleton<GameSettingMgr>
 					if (playerBehavior != null)
 					{
 						playerBehavior.method_38(settingItemValueContainer_0.fValue);
+						return;
+					}
+					break;
+				case SettingFunctionType.AimSensitivity:
+					if (playerBehavior != null)
+					{
+						playerBehavior.SetAimSensitivity(settingItemValueContainer_0.fValue);
 						return;
 					}
 					break;

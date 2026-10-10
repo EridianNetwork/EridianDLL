@@ -14,6 +14,7 @@ namespace XsdSettings
 			this.m_CoinShieldShopID = -1;
 			this.m_ClassModeShopID = -1;
 			this.m_OutfitShopID = -1;
+			this.m_MaterialShopID = -1;
 		}
 
 		// Token: 0x17000747 RID: 1863
@@ -60,6 +61,9 @@ namespace XsdSettings
 		// (set) Token: 0x0600488C RID: 18572 RVA: 0x0002F76C File Offset: 0x0002D96C
 		[DefaultValue(-1)]
 		public int m_OutfitShopID { get; set; }
+
+		[DefaultValue(-1)]
+		public int m_MaterialShopID { get; set; }
 
 		// Token: 0x0400352B RID: 13611
 		private NpcOccupation[] m_occupationsField;

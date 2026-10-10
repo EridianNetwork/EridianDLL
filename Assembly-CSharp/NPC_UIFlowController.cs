@@ -29,6 +29,7 @@ public class NPC_UIFlowController
 		this._UIFlowAcureClass.Add(NPC_UIFlowController.NPC_UIFlowState.WeaponUpgrade, new NPC_UIFlowController.NPCFlow_WeaponUpgrade());
 		this._UIFlowAcureClass.Add(NPC_UIFlowController.NPC_UIFlowState.PvP, new NPC_UIFlowController.NPCFlow_PVP());
 		this._UIFlowAcureClass.Add(NPC_UIFlowController.NPC_UIFlowState.OutfitShop, new NPC_UIFlowController.NPCFlow_OutfitShop());
+		this._UIFlowAcureClass.Add(NPC_UIFlowController.NPC_UIFlowState.MaterialShop, new NPC_UIFlowController.NPCFlow_MaterialShop());
 	}
 
 	// Token: 0x06003083 RID: 12419 RVA: 0x0001FABE File Offset: 0x0001DCBE
@@ -364,7 +365,8 @@ public class NPC_UIFlowController
 		// Token: 0x040021D0 RID: 8656
 		PvP,
 		// Token: 0x040021D1 RID: 8657
-		OutfitShop
+		OutfitShop,
+		MaterialShop
 	}
 
 	// Token: 0x02000723 RID: 1827
@@ -753,6 +755,26 @@ public class NPC_UIFlowController
 		}
 
 		// Token: 0x060030C3 RID: 12483 RVA: 0x0001FC78 File Offset: 0x0001DE78
+		public override void vmethod_1()
+		{
+			base.vmethod_1();
+			MonoSingleton<AppManager>.Instance.method_0().vmethod_5<ShopView>().Boolean_1 = false;
+		}
+	}
+
+	public class NPCFlow_MaterialShop : NPC_UIFlowController.NPC_FlowBase
+	{
+		public override void vmethod_0(NPC_UIFlowController.NPC_UIFlowState npc_UIFlowState_0)
+		{
+			base.vmethod_0(npc_UIFlowState_0);
+			MonoSingleton<AppManager>.Instance.method_0().vmethod_5<ShopView>().Boolean_1 = true;
+			global::XsdSettings.TownNpc curNPCSetting = NPC_UIFlowController.smethod_0()._context.CurNPCSetting;
+			if (curNPCSetting != null)
+			{
+				MonoSingleton<AppManager>.Instance.method_0().vmethod_5<ShopView>().method_3(curNPCSetting.m_MaterialShopID);
+			}
+		}
+
 		public override void vmethod_1()
 		{
 			base.vmethod_1();
