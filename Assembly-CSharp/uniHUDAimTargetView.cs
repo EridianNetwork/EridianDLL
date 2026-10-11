@@ -567,8 +567,10 @@ public class uniHUDAimTargetView : HUDAimTargetView
 	{
 		if (this._itemPanel != null)
 		{
-			this._itemPanel.method_12(Mathf.CeilToInt(vector2_0.x / GClass20.GClass20_0.Single_0), Mathf.CeilToInt(vector2_0.y / GClass20.GClass20_0.Single_0));
+			// this._itemPanel.method_12(Mathf.CeilToInt(vector2_0.x / GClass20.GClass20_0.Single_0), Mathf.CeilToInt(vector2_0.y / GClass20.GClass20_0.Single_0));
+			float uiScale = GClass20.GClass20_0.Single_0;
 			this._itemPanel.method_13(float_0);
+			this._itemPanel.method_12(vector2_0.x / uiScale, vector2_0.y / uiScale);
 		}
 	}
 
@@ -1761,24 +1763,54 @@ public class uniHUDAimTargetView : HUDAimTargetView
 			this._showItem = null;
 			this._compareItem = null;
 			this.displayObjectContainer_0.visible = false;
+			this._fDisplaySmoothed = false;
 		}
 
 		// Token: 0x060037D1 RID: 14289 RVA: 0x000250AF File Offset: 0x000232AF
-		public void method_12(int int_0, int int_1)
+		public void method_12(float float_0, float float_1)
 		{
 			if (this.displayObjectContainer_0 != null)
 			{
-				this.displayObjectContainer_0.x = (float)int_0 - this._fXOffset * this._fScale;
-				this.displayObjectContainer_0.y = (float)int_1 - this._fYOffset * this._fScale;
+				// this.displayObjectContainer_0.x = (float)int_0 - this._fXOffset * this._fScale;
+				// this.displayObjectContainer_0.y = (float)int_1 - this._fYOffset * this._fScale;
+				float targetX = float_0 - this._fXOffset * this._fScale;
+				float targetY = float_1 - this._fYOffset * this._fScale;
+				if (!this._fDisplaySmoothed)
+				{
+					this._fSmoothX = targetX;
+					this._fSmoothY = targetY;
+					this._fSmoothVelX = 0f;
+					this._fSmoothVelY = 0f;
+					this._fDisplaySmoothed = true;
+				}
+				else
+				{
+					this._fSmoothX = Mathf.SmoothDamp(this._fSmoothX, targetX, ref this._fSmoothVelX, 0.05f);
+					this._fSmoothY = Mathf.SmoothDamp(this._fSmoothY, targetY, ref this._fSmoothVelY, 0.05f);
+				}
+				this.displayObjectContainer_0.x = this._fSmoothX;
+				this.displayObjectContainer_0.y = this._fSmoothY;
 			}
 		}
 
 		// Token: 0x060037D2 RID: 14290 RVA: 0x00101EAC File Offset: 0x001000AC
 		public void method_13(float float_0)
 		{
-			this.displayObjectContainer_0.scaleY = float_0;
-			this.displayObjectContainer_0.scaleX = float_0;
-			this._fScale = float_0;
+			// this.displayObjectContainer_0.scaleY = float_0;
+			// this.displayObjectContainer_0.scaleX = float_0;
+			// this._fScale = float_0;
+			if (!this._fDisplaySmoothed)
+			{
+				this._fSmoothScale = float_0;
+				this._fSmoothVelScale = 0f;
+			}
+			else
+			{
+				this._fSmoothScale = Mathf.SmoothDamp(this._fSmoothScale, float_0, ref this._fSmoothVelScale, 0.05f);
+			}
+			this.displayObjectContainer_0.scaleY = this._fSmoothScale;
+			this.displayObjectContainer_0.scaleX = this._fSmoothScale;
+			this._fScale = this._fSmoothScale;
 		}
 
 		// Token: 0x040026DF RID: 9951
@@ -1789,6 +1821,20 @@ public class uniHUDAimTargetView : HUDAimTargetView
 
 		// Token: 0x040026E1 RID: 9953
 		private float _fScale;
+
+		private bool _fDisplaySmoothed;
+
+		private float _fSmoothX;
+
+		private float _fSmoothY;
+
+		private float _fSmoothScale;
+
+		private float _fSmoothVelX;
+
+		private float _fSmoothVelY;
+
+		private float _fSmoothVelScale;
 	}
 
 	// Token: 0x02000811 RID: 2065

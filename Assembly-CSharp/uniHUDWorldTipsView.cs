@@ -63,6 +63,7 @@ public class uniHUDWorldTipsView : HUDWorldTipsView
 	}
 
 	// Token: 0x0600397B RID: 14715 RVA: 0x0010BA40 File Offset: 0x00109C40
+	// handles the building of the damage numbers. going to insert a change here
 	public override void vmethod_5(int int_0, WeakPoint.StrengthType strengthType_0, Vector3 vector3_0, AttackInfo.ElementalType elementalType_0 = AttackInfo.ElementalType.None, bool bool_0 = true, bool bool_1 = false)
 	{
 		base.vmethod_5(int_0, strengthType_0, vector3_0, elementalType_0, bool_0, false);
@@ -199,6 +200,7 @@ public class uniHUDWorldTipsView : HUDWorldTipsView
 	}
 
 	// Token: 0x06003983 RID: 14723 RVA: 0x0010BDC4 File Offset: 0x00109FC4
+	// this handles the actual display of the numbers in the world. currently its jittery
 	private void method_9()
 	{
 		Camera camera_ = MonoSingleton<AppManager>.Instance.method_0().Camera_0;
@@ -241,16 +243,51 @@ public class uniHUDWorldTipsView : HUDWorldTipsView
 						}
 						DisplayObject displayObjectContainer_ = damageValuePanel.DisplayObjectContainer_0;
 						float num5 = num3 * 2f;
-						damageValuePanel.DisplayObjectContainer_0.scaleY = num5;
-						displayObjectContainer_.scaleX = num5;
+						if (!damageValuePanel.fDisplaySmoothed)
+						{
+							damageValuePanel.fSmoothScale = num5;
+							damageValuePanel.fSmoothVelScale = 0f;
+						}
+						else
+						{
+							damageValuePanel.fSmoothScale = Mathf.SmoothDamp(damageValuePanel.fSmoothScale, num5, ref damageValuePanel.fSmoothVelScale, 0.05f);
+						}
+						damageValuePanel.DisplayObjectContainer_0.scaleY = damageValuePanel.fSmoothScale;
+						displayObjectContainer_.scaleX = damageValuePanel.fSmoothScale;
 						damageValuePanel.DisplayObjectContainer_0.alpha = num4;
 					}
-					damageValuePanel.DisplayObjectContainer_0.x = (float)Mathf.CeilToInt(vector.x / GClass20.GClass20_0.Single_0);
-					damageValuePanel.DisplayObjectContainer_0.y = (float)Mathf.CeilToInt(((float)Screen.height - vector.y) / GClass20.GClass20_0.Single_0);
+					// EPIC: OLD Method of displaying the numbers. this was super jittery and not smooth . still kept it commented so we can refer back to what it was if we run into similar issues in the future. the new implementation is below, though.
+
+					// damageValuePanel.DisplayObjectContainer_0.x = (float)Mathf.CeilToInt(vector.x / GClass20.GClass20_0.Single_0);
+					// damageValuePanel.DisplayObjectContainer_0.y = (float)Mathf.CeilToInt(((float)Screen.height - vector.y) / GClass20.GClass20_0.Single_0);
+					// float uiScale = GClass20.GClass20_0.Single_0;
+					// damageValuePanel.DisplayObjectContainer_0.x = vector.x / uiScale;
+					// damageValuePanel.DisplayObjectContainer_0.y = ((float)Screen.height - vector.y) / uiScale;
+
+					// extra beldning for smoother movement
+					float uiScale = GClass20.GClass20_0.Single_0;
+					float targetX = vector.x / uiScale;
+					float targetY = ((float)Screen.height - vector.y) / uiScale;
+					if (!damageValuePanel.fDisplaySmoothed)
+					{
+						damageValuePanel.fSmoothX = targetX;
+						damageValuePanel.fSmoothY = targetY;
+						damageValuePanel.fSmoothVelX = 0f;
+						damageValuePanel.fSmoothVelY = 0f;
+						damageValuePanel.fDisplaySmoothed = true;
+					}
+					else
+					{
+						damageValuePanel.fSmoothX = Mathf.SmoothDamp(damageValuePanel.fSmoothX, targetX, ref damageValuePanel.fSmoothVelX, 0.05f);
+						damageValuePanel.fSmoothY = Mathf.SmoothDamp(damageValuePanel.fSmoothY, targetY, ref damageValuePanel.fSmoothVelY, 0.05f);
+					}
+					damageValuePanel.DisplayObjectContainer_0.x = damageValuePanel.fSmoothX;
+					damageValuePanel.DisplayObjectContainer_0.y = damageValuePanel.fSmoothY;
 				}
 				else
 				{
 					damageValuePanel.DisplayObjectContainer_0.visible = false;
+					damageValuePanel.fDisplaySmoothed = false;
 				}
 			}
 			else
@@ -539,6 +576,20 @@ public class uniHUDWorldTipsView : HUDWorldTipsView
 
 		// Token: 0x04002840 RID: 10304
 		public float fOrinHeight;
+
+		public bool fDisplaySmoothed;
+
+		public float fSmoothX;
+
+		public float fSmoothY;
+
+		public float fSmoothScale;
+
+		public float fSmoothVelX;
+
+		public float fSmoothVelY;
+
+		public float fSmoothVelScale;
 
 		// Token: 0x04002841 RID: 10305
 		protected MovieClip mcSelf;
