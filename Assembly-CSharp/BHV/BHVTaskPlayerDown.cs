@@ -84,6 +84,36 @@ namespace BHV
 				this.cameraEffectMgr_0.method_6(true);
 				this.cameraEffectMgr_0.method_7(0.4f);
 				//this.entityPlayer_0.method_59(true);
+
+				// no way to touch move speed and jumping without getting the components here. typically this
+				// shouldn't really be done on command, but I think it's fine for a game like this if done sparingly
+				this.playerController_0 = this.bhvtaskManager_0.GetComponent<PlayerController>();
+				if (this.playerController_0 != null)
+				{
+					this.originalMoveSpeedMultiplier = this.playerController_0.method_8();
+					this.playerController_0.method_7(0.1f);
+					this.movementSpeedCaptured = true;
+					this.originalPlayerActions = this.playerController_0.method_1();
+					this.playerController_0.method_2(this.originalPlayerActions & ~PlayerAction.Jump);
+					this.playerActionsCaptured = true;
+				}
+				this.badAssCharacterMotor_0 = this.bhvtaskManager_0.GetComponent<BadAssCharacterMotor>();
+				if (this.badAssCharacterMotor_0 != null)
+				{
+					this.originalJumpEnabled = this.badAssCharacterMotor_0.jumping.enabled;
+					this.badAssCharacterMotor_0.jumping.enabled = false;
+					this.jumpStateCaptured = true;
+				}
+				else
+				{
+					this.badAssCharacterMotorLite_0 = this.bhvtaskManager_0.GetComponent<BadAssCharacterMotorLite>();
+					if (this.badAssCharacterMotorLite_0 != null)
+					{
+						this.originalJumpEnabled = this.badAssCharacterMotorLite_0.jumping.enabled;
+						this.badAssCharacterMotorLite_0.jumping.enabled = false;
+						this.jumpStateCaptured = true;
+					}
+				}
 			}
 			DebugUtils.Log(LogCategory.AI, "BHVtaskPlayerDown InitTask() finished: true");
 			return true;
@@ -159,7 +189,30 @@ namespace BHV
 		// Token: 0x06000B9A RID: 2970 RVA: 0x0006731C File Offset: 0x0006551C
 		public override void vmethod_3(bool bool_3)
 		{
+			// restore the original movement speed and jump state when out of ffyl
 			base.vmethod_3(bool_3);
+			if (this.movementSpeedCaptured && this.playerController_0 != null)
+			{
+				this.playerController_0.method_7(this.originalMoveSpeedMultiplier);
+				this.movementSpeedCaptured = false;
+			}
+			if (this.playerActionsCaptured && this.playerController_0 != null)
+			{
+				this.playerController_0.method_2(this.originalPlayerActions);
+				this.playerActionsCaptured = false;
+			}
+			if (this.jumpStateCaptured)
+			{
+				if (this.badAssCharacterMotor_0 != null)
+				{
+					this.badAssCharacterMotor_0.jumping.enabled = this.originalJumpEnabled;
+				}
+				else if (this.badAssCharacterMotorLite_0 != null)
+				{
+					this.badAssCharacterMotorLite_0.jumping.enabled = this.originalJumpEnabled;
+				}
+				this.jumpStateCaptured = false;
+			}
 			if (!(this.playerController_0 != null))
 			{
 			}
@@ -211,5 +264,21 @@ namespace BHV
 
 		// Token: 0x04000A82 RID: 2690
 		private bool bool_2;
+
+		private float originalMoveSpeedMultiplier;
+
+		private bool originalJumpEnabled;
+
+		private bool movementSpeedCaptured;
+
+		private bool jumpStateCaptured;
+
+		private PlayerAction originalPlayerActions;
+
+		private bool playerActionsCaptured;
+
+		private BadAssCharacterMotor badAssCharacterMotor_0;
+
+		private BadAssCharacterMotorLite badAssCharacterMotorLite_0;
 	}
 }

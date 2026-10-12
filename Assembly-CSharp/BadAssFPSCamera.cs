@@ -147,7 +147,10 @@ public class BadAssFPSCamera : MonoBehaviour
 					this.m_FOVAimFactor = 0f;
 				}
 			}
-			float num2 = FloatAttributeValue.smethod_0(entityWeapon.m_attribute.method_1(AttributeType.ZoomEndFOV) as FloatAttributeValue) / this.m_taskManager.vmethod_0<BHVFirstPersonSettings>().m_FOVDefault;
+			float defaultFOV = this.m_taskManager.vmethod_0<BHVFirstPersonSettings>().m_FOVDefault;
+			
+			// makes the aim down FOV 10 degrees lower than the default FOV and lerps between them
+			float num2 = (defaultFOV - 45f) / defaultFOV;
 			return Mathf.Lerp(1f, num2, this.m_FOVAimFactor);
 		}
 		return 1f;
