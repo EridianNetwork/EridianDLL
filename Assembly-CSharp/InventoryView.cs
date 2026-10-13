@@ -461,6 +461,7 @@ public class InventoryView : BaseView
 			LocalizedString.smethod_0(new LocalizedString("PreviewItem")),
 			uiitemSlotData_0.item.method_6(),
 			new MenuItemProcessFunc(this.method_17));
+		GClass60.GClass60_0.method_2();
 		MonoSingleton<AppManager>.Instance.method_0().vmethod_5<PopupMenuView>().method_3(new MenuItemDef[] { menuItemDef });
 	}
 
