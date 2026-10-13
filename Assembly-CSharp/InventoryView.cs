@@ -451,6 +451,20 @@ public class InventoryView : BaseView
 		MonoSingleton<AppManager>.Instance.method_0().vmethod_5<PopupMenuView>().method_3(list.ToArray());
 	}
 
+	public void method_18(UIItemSlotData uiitemSlotData_0)
+	{
+		if (uiitemSlotData_0 == null || uiitemSlotData_0.item == null || !uiitemSlotData_0.item.method_3(ItemType.Weapon))
+		{
+			return;
+		}
+		MenuItemDef menuItemDef = new MenuItemDef(
+			LocalizedString.smethod_0(new LocalizedString("PreviewItem")),
+			uiitemSlotData_0.item.method_6(),
+			new MenuItemProcessFunc(this.method_17));
+		GClass60.GClass60_0.method_2();
+		MonoSingleton<AppManager>.Instance.method_0().vmethod_5<PopupMenuView>().method_3(new MenuItemDef[] { menuItemDef });
+	}
+
 	// Token: 0x06002FE8 RID: 12264 RVA: 0x000DAF90 File Offset: 0x000D9190
 	protected void method_15(object object_0)
 	{

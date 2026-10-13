@@ -732,6 +732,7 @@ public class uniCharInfoView : CharInfoView
 				gclass.addEventListener(MouseEvent.CLICK, new EventDispatcher.EventCallback(this.method_25));
 				gclass.addEventListener("slash", new EventDispatcher.EventCallback(this.method_24));
 				gclass.addEventListener("drop", new EventDispatcher.EventCallback(this.method_23));
+				gclass.addEventListener(GClass53.string_5, new EventDispatcher.EventCallback(this.method_37));
 				gclass.method_11(new GClass44.GDelegate2((MonoSingleton<AppManager>.Instance.method_0().vmethod_5<CharInfoView>() as uniCharInfoView).method_14));
 				gclass.method_15(new GClass42.GDelegate0(this.method_17));
 				gclass.object_0 = num;
@@ -1323,6 +1324,19 @@ public class uniCharInfoView : CharInfoView
 			this.mcRootMovie.removeEventListener("End", new EventDispatcher.EventCallback(this.method_36));
 			this.mcRootMovie.visible = false;
 			(MonoSingleton<AppManager>.Instance.method_0() as UniUIManager).method_37(this);
+		}
+
+		private void method_37(CEvent cevent_0)
+		{
+			GClass44 gclass = cevent_0.target as GClass44;
+			if (gclass != null)
+			{
+				UIItemSlotData uiitemSlotData = gclass.Object_0 as UIItemSlotData;
+				if (uiitemSlotData != null)
+				{
+					MonoSingleton<AppManager>.Instance.method_0().vmethod_5<InventoryView>().method_18(uiitemSlotData);
+				}
+			}
 		}
 
 		// Token: 0x0400254F RID: 9551

@@ -52,6 +52,10 @@ public class AnimationPlayerJumpLandState : PlayerAnimationState
 			base.method_8(MecanimAnimationID.ID_1st_JumpLand);
 		}
 		base.method_16("bJumpLand", false);
+		if (base.Boolean_0 && this.m_playerAnimManager.method_13(AnimationStateFSM.PlayerAim))
+		{
+			base.method_7(MecanimAnimationID.ID_1st_Aim);
+		}
 	}
 
 	// Token: 0x040003EF RID: 1007

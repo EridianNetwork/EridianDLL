@@ -142,15 +142,18 @@ public class uniNPCDialogView : NPCDialogView
 			if (this._strDialogID != null)
 			{
 				text = LocalizedString.smethod_0(new LocalizedString(this._strDialogID));
+				if (text != null)
+				{
+					text = text.Replace("\\n", "\n").Replace("\r\n", "\n").Replace('\r', '\n');
+				}
 			}
-			TextField childByName2 = childByName.getChildByName<TextField>("textDescription");
+			UnityTextField childByName2 = childByName.getChildByName<UnityTextField>("textDescription");
 			if (childByName2 != null)
 			{
 				childByName2.multiline = true;
 				TextFormat textFormat = childByName2.textFormat;
 				if (textFormat != null)
 				{
-					textFormat.wordWrap = true;
 					textFormat.color = Color.yellow;
 					childByName2.textFormat = textFormat;
 				}
