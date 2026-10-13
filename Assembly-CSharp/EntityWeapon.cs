@@ -1774,36 +1774,7 @@ public class EntityWeapon : EntityObject
 			}
 			if (this.m_flashMuzzle != null)
 			{
-				float num = 0f;
-				if (this.m_hasMask && this.m_isAimActive)
-				{
-					float num2 = FloatAttributeValue.smethod_0(WeaponStore.weaponStore.m_weaponDic[(int)this.method_99()].method_1(AttributeType.ZoomEndFOV) as FloatAttributeValue);
-					float num3 = FloatAttributeValue.smethod_0(this.m_attribute.method_1(AttributeType.ZoomEndFOV) as FloatAttributeValue);
-					num = 0.005f * (num2 - num3);
-				}
-				if (this.method_99() == WeaponType.RepeaterPistol)
-				{
-					float num4 = 0.16f - num;
-					this.m_flashMuzzle.transform.localPosition = new Vector3(num4 * 1.8f, num4 * 0.5f, -num4);
-				}
-				else if (this.method_99() == WeaponType.SniperRifle)
-				{
-					this.m_flashMuzzle.transform.localPosition = Vector3.back * (0.05f - num);
-				}
-				else if (this.method_99() == WeaponType.ShotGun)
-				{
-					this.m_flashMuzzle.transform.localPosition = Vector3.back * (0.15f - num);
-				}
-				else if (this.method_99() == WeaponType.CombatRifle)
-				{
-					float num5 = 0.6f - num;
-					this.m_flashMuzzle.transform.localPosition = new Vector3(num5 * 1.3f, num5 * -1f, -num5);
-				}
-				else if (this.method_99() == WeaponType.SMG)
-				{
-					float num6 = 0.16f - num;
-					this.m_flashMuzzle.transform.localPosition = new Vector3(num6 * 1.8f, num6 * -0.5f, -num6);
-				}
+				this.m_flashMuzzle.transform.localPosition = Vector3.zero;
 				this.m_flashMuzzle.gameObject.SetActive(true);
 				this.m_flashMuzzle.Play();
 				if (this.m_shotTrace != null)
