@@ -2362,10 +2362,29 @@ public class EntityPlayer : Entity, MeleeAttacker, KnockBackInterface, Interacti
 	// Token: 0x06001C81 RID: 7297 RVA: 0x0008D8C8 File Offset: 0x0008BAC8
 	private void method_112()
 	{
+		this.DeathReap_OnKill();
 		BerserkManage berserkManage = this.PlayerSkillManage_0 as BerserkManage;
 		if (berserkManage != null)
 		{
 			berserkManage.method_31();
+		}
+	}
+
+	private void DeathReap_OnKill()
+	{
+		if (this.vmethod_25() == null || !this.vmethod_25().IsMyActor())
+		{
+			return;
+		}
+		float num = this.PlayerEffectManager_0.method_0(EffectType.ReloadChance);
+		if (num <= 0f || UnityEngine.Random.value > num)
+		{
+			return;
+		}
+		EntityWeapon entityWeapon = this.vmethod_16();
+		if (entityWeapon != null)
+		{
+			entityWeapon.method_42();
 		}
 	}
 
